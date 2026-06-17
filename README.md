@@ -1,5 +1,4 @@
-[index.html.html](https://github.com/user-attachments/files/29033040/index.html.html)
-<!DOCTYPE html>
+**<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8"/>
@@ -103,7 +102,26 @@
         box-shadow:0 2px 8px rgba(0,0,0,.2);
       }
     }
-    @media(max-width:640px){.pc-tabs{display:none;}}
+    @media(max-width:640px){
+  .pc-tabs{
+    display:flex;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    gap:3px;
+    margin:10px 0 6px;
+    padding:4px;
+  }
+  .pc-tabs::-webkit-scrollbar{display:none;}
+  .pc-tab-btn{
+    flex:0 0 auto;
+    padding:8px 10px;
+    font-size:11px;
+    white-space:nowrap;
+  }
+  .bottom-nav{display:none;}
+  .page-wrap{padding-bottom:30px;}
+}
 
     .section-heading{font-size:13px;font-weight:700;color:var(--text-dim);
       letter-spacing:.3px;margin:18px 0 10px;display:flex;align-items:center;gap:6px;}
@@ -770,7 +788,7 @@
       <div class="form-card-header">기타</div>
       <div class="form-body"><div class="field"><label>태그</label><input type="text" id="tags" placeholder="예: VIP, 재구매, 법인"/></div></div>
     </div>
-    <button class="btn-submit" id="submitBtn" onclick="submitNew()">고객 정보 저장</button>
+    <button class="btn-submit" id="submitBtn" onclick="console.log('버튼클릭');submitNew()">고객 정보 저장</button>
     <div class="st-msg" id="msg-new"></div>
   </div>
 
@@ -1233,7 +1251,14 @@ function autoEditNextService(){
 
 // ── localStorage ─────────────────────────────────────────────
 function load(){try{return JSON.parse(localStorage.getItem(LS_KEY))||[];}catch(e){return[];}}
-function save(l){localStorage.setItem(LS_KEY,JSON.stringify(l));}
+function save(l){
+  try{
+    localStorage.setItem(LS_KEY,JSON.stringify(l));
+  }catch(e){
+    console.error('저장 오류:',e);
+    alert('저장 중 오류가 발생했습니다. 브라우저 저장공간을 확인해주세요.');
+  }
+}
 function normP(p){return(p||"").replace(/\D/g,"");}
 function findC(phone){
   var list=load(),np=normP(phone);
@@ -1701,9 +1726,16 @@ function submitNew(){
   var np=normP(phone),idx=-1;
   for(var i=0;i<list.length;i++){if(normP(list[i].phone)===np){idx=i;break;}}
   if(idx>=0){list[idx]=Object.assign(list[idx],data);}else{list.push(data);}
-  save(list);updateDash();
-  showMsg("msg-new","ok","✅ 저장되었습니다.");
-  resetNewForm();
+  try{
+    save(list);
+    updateDash();
+    showMsg("msg-new","ok","✅ 저장되었습니다. (총 "+load().length+"명)");
+    resetNewForm();
+    console.log('[저장완료]', data.customerName, data.phone);
+  }catch(e){
+    console.error('[저장오류]',e);
+    showMsg("msg-new","err","❌ 저장 실패: "+e.message);
+  }
 }
 function resetNewForm(){
   ["customerName","companyName","phone","region","birthDate","budget","purchaseTiming",
@@ -1747,12 +1779,17 @@ function submitUpdate(){
   if(md)c.currentMileageDate=md;
   if(mm)c.currentMileage=mm;
   c._updatedAt=now;
-  save(list);updateDash();
-  showMsg("msg-update","ok","✅ 추가상담이 저장되었습니다.");
-  ["u-name","u-phone","u-next","addConsultation","u-mileageDate","u-mileage"].forEach(function(id){var el=document.getElementById(id);if(el)el.value="";});
-  document.getElementById("u-status").selectedIndex=0;
-  document.getElementById("preview-box").classList.remove("show");
-  document.getElementById("nofound").classList.remove("show");
+  try{
+    save(list);updateDash();
+    showMsg("msg-update","ok","✅ 추가상담이 저장되었습니다.");
+    ["u-name","u-phone","u-next","addConsultation","u-mileageDate","u-mileage"].forEach(function(id){var el=document.getElementById(id);if(el)el.value="";});
+    document.getElementById("u-status").selectedIndex=0;
+    document.getElementById("preview-box").classList.remove("show");
+    document.getElementById("nofound").classList.remove("show");
+  }catch(e){
+    console.error('[상담저장오류]',e);
+    showMsg("msg-update","err","❌ 저장 실패: "+e.message);
+  }
 }
 
 // ── 수정 모달 ────────────────────────────────────────────────
@@ -1851,9 +1888,14 @@ function submitEdit(){
     nextServiceMileage:document.getElementById("e-nextServiceMileage").value
   };
   if(targetIdx>=0){list[targetIdx]=updated;}else{list.push(updated);}
-  save(list);updateDash();renderHomeContacts();renderList();
-  if(msgEl){msgEl.className="st-msg edit-save-msg ok";msgEl.textContent="✅ 수정이 저장되었습니다.";}
-  setTimeout(function(){closeEdit();},800);
+  try{
+    save(list);updateDash();renderHomeContacts();renderList();
+    if(msgEl){msgEl.className="st-msg edit-save-msg ok";msgEl.textContent="✅ 수정이 저장되었습니다.";}
+    setTimeout(function(){closeEdit();},800);
+  }catch(e){
+    console.error('[수정저장오류]',e);
+    if(msgEl){msgEl.className="st-msg edit-save-msg err";msgEl.textContent="❌ 저장 실패: "+e.message;}
+  }
 }
 
 // ── 대시보드 고객 상세 ────────────────────────────────────────
@@ -2108,6 +2150,17 @@ function renderAnalyticsIfVisible(){
 
 // ── 초기 실행 ────────────────────────────────────────────────
 (function(){
+  /* localStorage 접근 가능 여부 확인 */
+  try{
+    localStorage.setItem('_gy_test','1');
+    localStorage.removeItem('_gy_test');
+  }catch(e){
+    document.body.innerHTML='<div style="padding:40px;text-align:center;font-family:sans-serif;">'
+      +'<h2>⚠️ 저장소 접근 불가</h2>'
+      +'<p style="margin-top:12px;color:#666;">시크릿 모드이거나 브라우저 설정에서 localStorage가 차단되어 있습니다.<br>'
+      +'일반 모드로 열어주세요.</p></div>';
+    return;
+  }
   var d=new Date();
 
   document.addEventListener("keydown",function(e){
@@ -2344,3 +2397,4 @@ function closeSchedPopup(e){if(e.target===document.getElementById('schedPopupOve
 </script>
 </body>
 </html>
+**
