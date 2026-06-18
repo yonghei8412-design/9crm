@@ -2603,11 +2603,12 @@ function closeSchedPopup(e){if(e.target===document.getElementById('schedPopupOve
    - GitHub Pages 인라인 onclick 차단 우회
 ══════════════════════════════════════ */
 function initEvents(){
-
-  /* ── 탭 버튼 (data-view) ── */
-  document.querySelectorAll('[data-view]').forEach(function(el){
-    el.addEventListener('click', function(){ showView(el.getAttribute('data-view')); });
-  });
+  /* ── 탭 버튼 (data-view) - 최우선 바인딩 ── */
+  try{
+    document.querySelectorAll('[data-view]').forEach(function(el){
+      el.addEventListener('click', function(){ showView(el.getAttribute('data-view')); });
+    });
+  }catch(e){ console.error('[탭버튼 바인딩 오류]',e); }
 
   /* ── 고객현황 필터 카드 ── */
   document.querySelectorAll('[data-gofilter]').forEach(function(el){
@@ -2656,16 +2657,12 @@ function initEvents(){
   if(clearAllBtn) clearAllBtn.addEventListener('click', clearAllData);
 
   /* ── 저장 버튼들 ── */
-  var submitNewBtn = document.getElementById('submitNewBtn');
-  if(submitNewBtn) submitNewBtn.addEventListener('click', submitNew);
-  var submitUpdateBtn = document.getElementById('submitUpdateBtn');
-  if(submitUpdateBtn) submitUpdateBtn.addEventListener('click', submitUpdate);
-  var submitEditBtn = document.getElementById('submitEditBtn');
-  if(submitEditBtn) submitEditBtn.addEventListener('click', submitEdit);
+  try{var submitNewBtn=document.getElementById('submitNewBtn');if(submitNewBtn)submitNewBtn.addEventListener('click',submitNew);}catch(e){}
+  try{var submitUpdateBtn=document.getElementById('submitUpdateBtn');if(submitUpdateBtn)submitUpdateBtn.addEventListener('click',submitUpdate);}catch(e){}
+  try{var submitEditBtn=document.getElementById('submitEditBtn');if(submitEditBtn)submitEditBtn.addEventListener('click',submitEdit);}catch(e){}
 
   /* ── 스케줄 추가 ── */
-  var schedAddBtn = document.getElementById('schedAddBtn');
-  if(schedAddBtn) schedAddBtn.addEventListener('click', schedAddTask);
+  try{var schedAddBtn=document.getElementById('schedAddBtn');if(schedAddBtn)schedAddBtn.addEventListener('click',schedAddTask);}catch(e){}
   var schedAddText = document.getElementById('schedAddText');
   if(schedAddText) schedAddText.addEventListener('keydown', function(e){
     if(e.key==='Enter') schedAddTask();
@@ -2806,6 +2803,13 @@ function initEvents(){
       return;
     }
 
+    /* 탭 버튼 (data-view) - 이벤트 위임 백업 */
+    var viewBtn = e.target.closest('[data-view]');
+    if(viewBtn){
+      showView(viewBtn.getAttribute('data-view'));
+      return;
+    }
+
   });
 
 }
@@ -2896,11 +2900,10 @@ function bindMemoEvents(prefix){
 }
 
 document.addEventListener('DOMContentLoaded', function(){
-  initEvents();
-  /* 메모 이벤트 바인딩 */
-  bindMemoEvents('');
-  bindMemoEvents('u-');
-  bindMemoEvents('e-');
+  try{ initEvents(); } catch(e){ console.error('[initEvents 오류]', e); }
+  try{ bindMemoEvents(''); } catch(e){}
+  try{ bindMemoEvents('u-'); } catch(e){}
+  try{ bindMemoEvents('e-'); } catch(e){}
 });
 
 </script>
