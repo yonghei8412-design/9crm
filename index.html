@@ -876,7 +876,7 @@
       <div class="form-card-header">계약 / 출고 정보</div>
       <div class="form-body"><div class="grid-2">
         <div class="field"><label>계약일</label><input type="date" id="contractDate"/></div>
-        <div class="field"><label>출고일</label><input type="date" id="deliveryDate" id="deliveryDateInput"/></div>
+        <div class="field"><label>출고일</label><input type="date" id="deliveryDate"/></div>
         <div class="field"><label>출고월 <span style="font-size:10px;color:var(--text-lt);">(자동)</span></label><input type="text" id="deliveryMonth" class="auto-field" readonly/></div>
       </div></div>
     </div>
@@ -944,7 +944,7 @@
         <div class="field"><label>현재 주행거리</label><input type="text" id="u-mileage" placeholder="예: 14000"/></div>
       </div></div>
     </div>
-    <button class="btn-submit blue-btn" id="updateBtn" id="submitUpdateBtn">추가상담 저장</button>
+    <button class="btn-submit blue-btn" id="submitUpdateBtn">추가상담 저장</button>
     <div class="st-msg" id="msg-update"></div>
   </div>
 
@@ -960,7 +960,7 @@
     <div class="backup-bar">
       <button class="backup-btn" id="exportBtn">📤 데이터 내보내기</button>
       <button class="backup-btn" id="importTriggerBtn">📥 데이터 가져오기</button>
-      <input type="file" id="importFile" accept=".json" style="display:none" id="importFileInput"/>
+      <input type="file" id="importFile" accept=".json" style="display:none"/>
       <button class="backup-btn danger" id="clearAllBtn">🗑 전체 삭제</button>
     </div>
     <div class="filter-bar" id="filterBar">
@@ -1148,7 +1148,7 @@
         <div class="form-card-header">계약 / 출고 정보</div>
         <div class="form-body"><div class="grid-2">
           <div class="field"><label>계약일</label><input type="date" id="e-contractDate"/></div>
-          <div class="field"><label>출고일</label><input type="date" id="e-deliveryDate" id="eDeliveryDateInput"/></div>
+          <div class="field"><label>출고일</label><input type="date" id="e-deliveryDate"/></div>
           <div class="field"><label>출고월 <span style="font-size:10px;color:var(--text-lt);">(자동)</span></label><input type="text" id="e-deliveryMonth" class="auto-field" readonly/></div>
         </div></div>
       </div>
@@ -1160,7 +1160,7 @@
     <div class="st-msg edit-save-msg" id="edit-save-msg"></div>
     <div class="edit-modal-footer">
       <button class="btn-edit-cancel" class="close-edit-btn2">취소</button>
-      <button class="btn-edit-save" id="editSaveBtn" id="submitEditBtn">✅ 수정 저장</button>
+      <button class="btn-edit-save" id="submitEditBtn">✅ 수정 저장</button>
     </div>
   </div>
 </div>
@@ -2651,7 +2651,7 @@ function initEvents(){
   if(importTriggerBtn) importTriggerBtn.addEventListener('click', function(){
     document.getElementById('importFile').click();
   });
-  var importFileInput = document.getElementById('importFileInput') || document.getElementById('importFile');
+  var importFileInput = document.getElementById('importFile') || document.getElementById('importFile');
   if(importFileInput) importFileInput.addEventListener('change', importData);
   var clearAllBtn = document.getElementById('clearAllBtn');
   if(clearAllBtn) clearAllBtn.addEventListener('click', clearAllData);
@@ -2716,9 +2716,9 @@ function initEvents(){
   if(elsmEl) elsmEl.addEventListener('input', function(){ autoEditNextService(); });
 
   /* ── 출고일 → 출고월 자동 ── */
-  var ddInput = document.getElementById('deliveryDateInput') || document.getElementById('deliveryDate');
+  var ddInput = document.getElementById('deliveryDate') || document.getElementById('deliveryDate');
   if(ddInput) { ddInput.addEventListener('input', autoDeliveryMonth); ddInput.addEventListener('change', autoDeliveryMonth); }
-  var eddInput = document.getElementById('eDeliveryDateInput') || document.getElementById('e-deliveryDate');
+  var eddInput = document.getElementById('e-deliveryDate') || document.getElementById('e-deliveryDate');
   if(eddInput) { eddInput.addEventListener('input', autoEditDeliveryMonth); eddInput.addEventListener('change', autoEditDeliveryMonth); }
 
   /* ── 모델 선택 ── */
