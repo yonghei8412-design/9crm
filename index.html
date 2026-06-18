@@ -2182,7 +2182,8 @@ function renderAnalyticsIfVisible(){
 /* ══════════════════════════════════════
    스케줄 기능
 ══════════════════════════════════════ */
-var SCHED_KEY = 'gy_schedule_v1';
+var SCHED_KEY    = 'gy_schedule_v1';
+var CRM_DONE_KEY = 'gy_crm_done_v1';  // 고객 자동 일정 완료 상태
 var _sYear, _sMonth;
 
 function schedInitDate(){
@@ -2192,6 +2193,30 @@ function schedInitDate(){
 }
 function loadSched(){try{return JSON.parse(localStorage.getItem(SCHED_KEY))||[];}catch(e){return[];}}
 function saveSched(l){localStorage.setItem(SCHED_KEY,JSON.stringify(l));}
+
+/* CRM 자동 일정 완료 상태 */
+function loadCrmDone(){try{return JSON.parse(localStorage.getItem(CRM_DONE_KEY))||{};}catch(e){return{};}}
+function saveCrmDone(obj){localStorage.setItem(CRM_DONE_KEY,JSON.stringify(obj));}
+function getCrmDoneId(dateStr,type,name){return dateStr+'__'+type+'__'+name;}
+function isCrmDone(dateStr,type,name){
+  var done=loadCrmDone();
+  return !!done[getCrmDoneId(dateStr,type,name)];
+}
+function toggleCrmDone(dateStr,type,name){
+  var done=loadCrmDone();
+  var key=getCrmDoneId(dateStr,type,name);
+  done[key]=!done[key];
+  saveCrmDone(done);
+  renderSchedCalendar();
+  // 팝업 내 버튼 상태 갱신
+  var btn=document.querySelector('[data-crm-done="'+key+'"]');
+  if(btn){
+    btn.classList.toggle('checked',done[key]);
+    btn.textContent=done[key]?'✓':'';
+    var txt=btn.parentElement.querySelector('.sched-popup-text');
+    if(txt)txt.classList.toggle('done',done[key]);
+  }
+}
 
 function schedMove(dir){
   _sMonth+=dir;
@@ -2210,21 +2235,26 @@ function buildSchedCRMEvents(list, year){
   function addEv(dateStr,ev){var n=normalizeDateStr(dateStr);if(!n||n.length<10)return;if(!evMap[n])evMap[n]=[];evMap[n].push(ev);}
   list.forEach(function(c){
     var name=c.customerName||'(이름없음)',phone=c.phone||'';
-    if(c.nextContact)         addEv(c.nextContact,         {type:'contact',   label:'📞 연락: '+name,  phone:phone,cls:'ev-contact',  crm:true});
-    if(c.insuranceExpireDate) addEv(c.insuranceExpireDate, {type:'insurance', label:'🛡 보험: '+name,  phone:phone,cls:'ev-insurance',crm:true});
-    if(c.inspectionDueDate)   addEv(c.inspectionDueDate,   {type:'inspection',label:'🔧 검사: '+name,  phone:phone,cls:'ev-inspection',crm:true});
-    if(c.financeEndDate)      addEv(c.financeEndDate,      {type:'finance',   label:'💳 금융: '+name,  phone:phone,cls:'ev-finance',  crm:true});
-    if(c.nextServiceDate)     addEv(c.nextServiceDate,     {type:'service',   label:'🔧 점검: '+name,  phone:phone,cls:'ev-service',  crm:true});
+    var crmDoneMap=loadCrmDone();
+    function makeCrmEv(dateStr,type,label,cls){
+      var key=getCrmDoneId(dateStr,type,name);
+      return {type:type,label:label,phone:phone,cls:cls+(crmDoneMap[key]?' ev-done':''),crm:true,done:!!crmDoneMap[key],name:name};
+    }
+    if(c.nextContact)         addEv(c.nextContact,         makeCrmEv(normalizeDateStr(c.nextContact),'contact','📞 연락: '+name,'ev-contact'));
+    if(c.insuranceExpireDate) addEv(c.insuranceExpireDate, makeCrmEv(normalizeDateStr(c.insuranceExpireDate),'insurance','🛡 보험: '+name,'ev-insurance'));
+    if(c.inspectionDueDate)   addEv(c.inspectionDueDate,   makeCrmEv(normalizeDateStr(c.inspectionDueDate),'inspection','🔧 검사: '+name,'ev-inspection'));
+    if(c.financeEndDate)      addEv(c.financeEndDate,      makeCrmEv(normalizeDateStr(c.financeEndDate),'finance','💳 금융: '+name,'ev-finance'));
+    if(c.nextServiceDate)     addEv(c.nextServiceDate,     makeCrmEv(normalizeDateStr(c.nextServiceDate),'service','🔧 점검: '+name,'ev-service'));
     if(c.birthDate){
       var b=parseD(c.birthDate);
       if(b){var bStr=year+'-'+String(b.getMonth()+1).padStart(2,'0')+'-'+String(b.getDate()).padStart(2,'0');
-        addEv(bStr,{type:'birthday',label:'🎂 생일: '+name,phone:phone,cls:'ev-birthday',crm:true});}
+        addEv(bStr,makeCrmEv(bStr,'birthday','🎂 생일: '+name,'ev-birthday'));}
     }
     if(c.deliveryDate){
       var del=parseD(c.deliveryDate);
       if(del){var yrs=year-del.getFullYear();
         if(yrs>=1){var aStr=year+'-'+String(del.getMonth()+1).padStart(2,'0')+'-'+String(del.getDate()).padStart(2,'0');
-          addEv(aStr,{type:'delivery',label:'🚗 출고'+yrs+'년: '+name,phone:phone,cls:yrs>=3?'ev-delivery3':'ev-delivery1',crm:true});}}
+          addEv(aStr,makeCrmEv(aStr,'delivery','🚗 출고'+yrs+'년: '+name,yrs>=3?'ev-delivery3':'ev-delivery1'));}}
     }
   });
   return evMap;
@@ -2376,7 +2406,14 @@ function openSchedPopup(dateStr,evs){
     html+='<div class="sched-popup-text'+(ev.done?' done':'')+'">'+esc(ev.label)+'</div>';
     if(ev.phone)html+='<a class="sched-popup-phone" href="tel:'+esc(ev.phone)+'">📞 '+esc(ev.phone)+'</a>';
     html+='</div>';
-    if(ev.custom)html+='<button class="sched-check'+(ev.done?' checked':'')+'" data-sched-done="'+ev.id+'">'+(ev.done?'✓':'')+'</button>';
+    if(ev.custom){
+      html+='<button class="sched-check'+(ev.done?' checked':'')+'" data-sched-done="'+ev.id+'">'+(ev.done?'✓':'')+'</button>';
+    } else {
+      /* CRM 자동 일정 완료 체크 */
+      var crmKey=getCrmDoneId(dateStr,ev.type,ev.name);
+      var crmDone=isCrmDone(dateStr,ev.type,ev.name);
+      html+='<button class="sched-check'+(crmDone?' checked':'')+'" data-crm-done="'+crmKey+'" title="완료 체크">'+(crmDone?'✓':'')+'</button>';
+    }
     html+='</div>';
   });
   document.getElementById('schedPopupList').innerHTML=html;
