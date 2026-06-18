@@ -467,6 +467,8 @@
     .ev-custom-5{background:#fde8e8;color:#8a1818;border-left:3px solid #cc3333;}   /* 전시장업무 - 빨강 */
     .ev-custom-6{background:#e8ffff;color:#0a5a5a;border-left:3px solid #22aaaa;}   /* 보고/정산 - 청록 */
     .ev-custom-7{background:#fff8e0;color:#8a6000;border-left:3px solid #e8a020;box-shadow:inset 2px 0 0 #e8a020;}   /* 중요 - 골드 */
+    .ev-custom-8{background:#fff0f5;color:#8a0040;border-left:3px solid #cc2266;}   /* 고객 AS - 핑크 */
+    .ev-custom-9{background:#f0f5ff;color:#2a3a8a;border-left:3px solid #4455bb;}   /* 회의 - 남색 */
     .ev-done{opacity:.42;text-decoration:line-through;}
     .cal-event .del-btn{display:none;position:absolute;right:3px;top:50%;transform:translateY(-50%);font-size:9px;color:rgba(0,0,0,.45);cursor:pointer;font-weight:900;background:rgba(255,255,255,.8);border-radius:50%;width:13px;height:13px;align-items:center;justify-content:center;line-height:1;}
     .cal-event{position:relative;}
@@ -640,6 +642,8 @@
         <option value="5">🏢 전시장업무</option>
         <option value="6">📊 보고/정산</option>
         <option value="7">⭐ 중요</option>
+        <option value="8">🔧 고객 AS</option>
+        <option value="9">👥 회의</option>
       </select>
       <button class="add-btn" id="schedAddBtn">+ 추가</button>
     </div>
@@ -661,6 +665,8 @@
       <div class="legend-item"><div class="legend-dot" style="background:#cc3333;"></div>전시장업무</div>
       <div class="legend-item"><div class="legend-dot" style="background:#22aaaa;"></div>보고/정산</div>
       <div class="legend-item"><div class="legend-dot" style="background:#e8a020;"></div>⭐ 중요</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#cc2266;"></div>🔧 고객 AS</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#4455bb;"></div>👥 회의</div>
     </div>
     <!-- 달력 -->
     <div class="cal-grid">
@@ -2408,7 +2414,7 @@ function renderSchedCalendar(){
 }
 
 /* 일정 추가 */
-var CAT_LABELS=['📞 고객연락','🤝 상담/미팅','📝 계약업무','🚗 출고준비','💼 사무처리','🏢 전시장업무','📊 보고/정산','⭐ 중요'];
+var CAT_LABELS=['📞 고객연락','🤝 상담/미팅','📝 계약업무','🚗 출고준비','💼 사무처리','🏢 전시장업무','📊 보고/정산','⭐ 중요','🔧 고객 AS','👥 회의'];
 function schedAddTask(){
   var text=document.getElementById('schedAddText').value.trim();
   var date=document.getElementById('schedAddDate').value;
