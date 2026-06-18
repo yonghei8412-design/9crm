@@ -2629,6 +2629,76 @@ function initEvents(){
   var searchInput = document.getElementById('searchInput');
   if(searchInput) searchInput.addEventListener('input', renderList);
 
+  /* ── 동적 생성 버튼 이벤트 위임 (팝업 내 체크/삭제/수정 등) ── */
+  document.addEventListener('click', function(e){
+
+    /* 스케줄 직접입력 완료 체크 */
+    var schedDoneBtn = e.target.closest('[data-sched-done]');
+    if(schedDoneBtn){
+      var id = schedDoneBtn.getAttribute('data-sched-done');
+      if(id) schedToggleDone(id);
+      return;
+    }
+
+    /* CRM 자동일정 완료 체크 */
+    var crmDoneBtn = e.target.closest('[data-crm-done]');
+    if(crmDoneBtn){
+      var crmKey = crmDoneBtn.getAttribute('data-crm-done');
+      if(crmKey){
+        var parts = crmKey.split('__');
+        if(parts.length===3) toggleCrmDone(parts[0], parts[1], parts[2]);
+      }
+      return;
+    }
+
+    /* 고객 수정 버튼 */
+    var editIdxBtn = e.target.closest('[data-edit-idx]');
+    if(editIdxBtn){
+      var idx = parseInt(editIdxBtn.getAttribute('data-edit-idx'));
+      if(!isNaN(idx)) openEditByIdx(idx);
+      return;
+    }
+
+    /* 상세정보 펼치기/닫기 */
+    var togDetBtn = e.target.closest('[data-togdet]');
+    if(togDetBtn){
+      var detId = togDetBtn.getAttribute('data-togdet');
+      if(detId) togDet(togDetBtn, detId);
+      return;
+    }
+
+    /* 차량관리 펼치기/닫기 */
+    var togCareBtn = e.target.closest('[data-togcare]');
+    if(togCareBtn){
+      var careId = togCareBtn.getAttribute('data-togcare');
+      if(careId) togCare(togCareBtn, careId);
+      return;
+    }
+
+    /* 스케줄 삭제 */
+    var delBtn = e.target.closest('[data-sched-del]');
+    if(delBtn){
+      var delId = delBtn.getAttribute('data-sched-del');
+      if(delId) schedDeleteTask(delId);
+      return;
+    }
+
+    /* 분석 연도 필터 */
+    var anYearBtn = e.target.closest('[data-anyear]');
+    if(anYearBtn && anYearBtn.hasAttribute('data-anyear')){
+      setAnYear(anYearBtn.getAttribute('data-anyear'));
+      return;
+    }
+
+    /* 출고 연도 필터 */
+    var delYearBtn = e.target.closest('[data-delyear]');
+    if(delYearBtn && delYearBtn.hasAttribute('data-delyear')){
+      setDeliveryYear(delYearBtn.getAttribute('data-delyear'));
+      return;
+    }
+
+  });
+
 }
 
 
