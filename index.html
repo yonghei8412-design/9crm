@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8"/>
@@ -510,13 +511,13 @@
 
 <div class="page-wrap">
   <div class="pc-tabs">
-    <button class="pc-tab-btn active" onclick="showView('home')">🏠 대시보드</button>
-    <button class="pc-tab-btn" onclick="showView('schedule')">🗓 스케줄</button>
-    <button class="pc-tab-btn" onclick="showView('calendar')">📅 캘린더</button>
-    <button class="pc-tab-btn" onclick="showView('new')">✏️ 신규등록</button>
-    <button class="pc-tab-btn" onclick="showView('consult')">📋 추가상담</button>
-    <button class="pc-tab-btn" onclick="showView('list')">👥 고객목록</button>
-    <button class="pc-tab-btn" onclick="showView('analytics')">📊 분석</button>
+    <button class="pc-tab-btn" data-view="home" active">🏠 대시보드</button>
+    <button class="pc-tab-btn" data-view="schedule">🗓 스케줄</button>
+    <button class="pc-tab-btn" data-view="calendar">📅 캘린더</button>
+    <button class="pc-tab-btn" data-view="new">✏️ 신규등록</button>
+    <button class="pc-tab-btn" data-view="consult">📋 추가상담</button>
+    <button class="pc-tab-btn" data-view="list">👥 고객목록</button>
+    <button class="pc-tab-btn" data-view="analytics">📊 분석</button>
   </div>
 
   <!-- 대시보드 -->
@@ -524,14 +525,14 @@
 
     <div class="section-heading"><span class="dot"></span> 고객 현황</div>
     <div class="stat-grid">
-      <div class="stat-card" onclick="goFilter('')"><div class="stat-num" id="d-total" style="color:var(--gold)">0</div><div class="stat-label">전체</div></div>
-      <div class="stat-card" onclick="goFilter('신규문의')"><div class="stat-num" id="d-new" style="color:#3a3a45">0</div><div class="stat-label">신규문의</div></div>
-      <div class="stat-card" onclick="goFilter('A급가망')"><div class="stat-num" id="d-a" style="color:#c05800">0</div><div class="stat-label">A급가망</div></div>
-      <div class="stat-card" onclick="goFilter('상담중')"><div class="stat-num" id="d-c" style="color:#1055a8">0</div><div class="stat-label">상담중</div></div>
-      <div class="stat-card" onclick="goFilter('계약유력')"><div class="stat-num" id="d-l" style="color:#6020a0">0</div><div class="stat-label">계약유력</div></div>
-      <div class="stat-card" onclick="goFilter('계약')"><div class="stat-num" id="d-k" style="color:#0f6e35">0</div><div class="stat-label">계약</div></div>
-      <div class="stat-card" onclick="goFilter('출고')"><div class="stat-num" id="d-d" style="color:#0a5528">0</div><div class="stat-label">출고</div></div>
-      <div class="stat-card" onclick="goFilter('해약')"><div class="stat-num" id="d-x" style="color:#a01515">0</div><div class="stat-label">해약</div></div>
+      <div class="stat-card" data-gofilter=""><div class="stat-num" id="d-total" style="color:var(--gold)">0</div><div class="stat-label">전체</div></div>
+      <div class="stat-card" data-gofilter="신규문의"><div class="stat-num" id="d-new" style="color:#3a3a45">0</div><div class="stat-label">신규문의</div></div>
+      <div class="stat-card" data-gofilter="A급가망"><div class="stat-num" id="d-a" style="color:#c05800">0</div><div class="stat-label">A급가망</div></div>
+      <div class="stat-card" data-gofilter="상담중"><div class="stat-num" id="d-c" style="color:#1055a8">0</div><div class="stat-label">상담중</div></div>
+      <div class="stat-card" data-gofilter="계약유력"><div class="stat-num" id="d-l" style="color:#6020a0">0</div><div class="stat-label">계약유력</div></div>
+      <div class="stat-card" data-gofilter="계약"><div class="stat-num" id="d-k" style="color:#0f6e35">0</div><div class="stat-label">계약</div></div>
+      <div class="stat-card" data-gofilter="출고"><div class="stat-num" id="d-d" style="color:#0a5528">0</div><div class="stat-label">출고</div></div>
+      <div class="stat-card" data-gofilter="해약"><div class="stat-num" id="d-x" style="color:#a01515">0</div><div class="stat-label">해약</div></div>
     </div>
     <div class="section-heading"><span class="dot"></span> 📈 판매실적</div>
     <div class="sales-grid">
@@ -558,12 +559,12 @@
     </div>
     <div class="section-heading"><span class="dot"></span> 차량관리 알림</div>
     <div class="care-grid">
-      <div class="care-card bday" onclick="goCareFilter('birthday7')"><div class="care-num" id="dc-bday" style="color:var(--purple)">0</div><div class="care-label">🎂 생일 D-7</div></div>
-      <div class="care-card warn" onclick="goCareFilter('insurance30')"><div class="care-num" id="dc-ins" style="color:var(--orange)">0</div><div class="care-label">🛡 보험만기 30일</div></div>
-      <div class="care-card warn" onclick="goCareFilter('maintenance')"><div class="care-num" id="dc-insp" style="color:var(--orange)">0</div><div class="care-label">🔧 검사/정기점검</div></div>
-      <div class="care-card warn" onclick="goCareFilter('finance90')"><div class="care-num" id="dc-fin" style="color:var(--orange)">0</div><div class="care-label">💳 금융종료 90일</div></div>
-      <div class="care-card info" onclick="goCareFilter('delivery1yr')"><div class="care-num" id="dc-1yr" style="color:var(--green)">0</div><div class="care-label">🚗 출고 1년↑</div></div>
-      <div class="care-card alert" onclick="goCareFilter('delivery3yr')"><div class="care-num" id="dc-3yr" style="color:var(--danger)">0</div><div class="care-label">🚗 출고 3년↑</div></div>
+      <div class="care-card bday" data-caref="birthday7"><div class="care-num" id="dc-bday" style="color:var(--purple)">0</div><div class="care-label">🎂 생일 D-7</div></div>
+      <div class="care-card warn" data-caref="insurance30"><div class="care-num" id="dc-ins" style="color:var(--orange)">0</div><div class="care-label">🛡 보험만기 30일</div></div>
+      <div class="care-card warn" data-caref="maintenance"><div class="care-num" id="dc-insp" style="color:var(--orange)">0</div><div class="care-label">🔧 검사/정기점검</div></div>
+      <div class="care-card warn" data-caref="finance90"><div class="care-num" id="dc-fin" style="color:var(--orange)">0</div><div class="care-label">💳 금융종료 90일</div></div>
+      <div class="care-card info" data-caref="delivery1yr"><div class="care-num" id="dc-1yr" style="color:var(--green)">0</div><div class="care-label">🚗 출고 1년↑</div></div>
+      <div class="care-card alert" data-caref="delivery3yr"><div class="care-num" id="dc-3yr" style="color:var(--danger)">0</div><div class="care-label">🚗 출고 3년↑</div></div>
     </div>
     <div class="section-heading"><span class="dot"></span> 오늘 연락할 고객</div>
     <div id="todayList"><div class="contact-empty">오늘 연락할 고객이 없습니다</div></div>
@@ -585,19 +586,19 @@
     <!-- 월 네비 -->
     <div class="cal-nav">
       <div class="cal-nav-center">
-        <button class="nav-btn" onclick="schedMove(-1)">&#8249;</button>
+        <button class="nav-btn" data-schedmove="-1">&#8249;</button>
         <div>
           <div class="cal-month-title" id="schedMonthTitle"></div>
           <div class="cal-month-sub" id="schedMonthSub"></div>
         </div>
-        <button class="nav-btn" onclick="schedMove(1)">&#8250;</button>
+        <button class="nav-btn" data-schedmove="1">&#8250;</button>
       </div>
-      <button class="today-btn" onclick="schedGoToday()">오늘로</button>
+      <button class="today-btn" id="schedTodayBtn">오늘로</button>
     </div>
     <!-- 빠른 일정 추가 -->
     <div class="add-bar">
       <div class="add-bar-icon">✏️</div>
-      <input class="add-input" id="schedAddText" placeholder="할 일 입력... (Enter)" onkeydown="if(event.key==='Enter')schedAddTask()"/>
+      <input class="add-input" id="schedAddText" placeholder="할 일 입력... (Enter)"/>
       <input class="add-date-input" type="date" id="schedAddDate"/>
       <select class="add-color-select" id="schedAddColor">
         <option value="0">🔵 파랑</option>
@@ -607,7 +608,7 @@
         <option value="4">🟣 보라</option>
         <option value="5">🩵 하늘</option>
       </select>
-      <button class="add-btn" onclick="schedAddTask()">+ 추가</button>
+      <button class="add-btn" id="schedAddBtn">+ 추가</button>
     </div>
     <!-- 범례 -->
     <div class="legend">
@@ -633,20 +634,20 @@
   </div>
 
   <!-- 스케줄 팝업 -->
-  <div class="sched-popup-overlay" id="schedPopupOverlay" onclick="closeSchedPopup(event)">
+  <div class="sched-popup-overlay" id="schedPopupOverlay">
     <div class="sched-popup">
       <div class="sched-popup-date" id="schedPopupDate"></div>
       <div id="schedPopupList"></div>
-      <button class="sched-popup-close" onclick="document.getElementById('schedPopupOverlay').classList.remove('open');document.body.style.overflow='';">닫기</button>
+      <button class="sched-popup-close" id="closeSchedPopupBtn">닫기</button>
     </div>
   </div>
 
   <!-- 캘린더 -->
   <div class="view" id="calendarView">
     <div class="cal-header">
-      <button class="cal-nav-btn" onclick="calMove(-1)">&#8249;</button>
+      <button class="cal-nav-btn" data-calmove="-1">&#8249;</button>
       <div class="cal-title" id="calTitle"></div>
-      <button class="cal-nav-btn" onclick="calMove(1)">&#8250;</button>
+      <button class="cal-nav-btn" data-calmove="1">&#8250;</button>
     </div>
     <div class="cal-legend">
       <div class="cal-leg-item"><div class="cal-leg-dot" style="background:#1055a8;"></div>다음연락일</div>
@@ -673,11 +674,11 @@
   </div>
 
   <!-- 캘린더 팝업 -->
-  <div class="cal-popup-overlay" id="calPopupOverlay" onclick="closeCalPopup(event)">
+  <div class="cal-popup-overlay" id="calPopupOverlay">
     <div class="cal-popup" id="calPopup">
       <div class="cal-popup-date" id="calPopupDate"></div>
       <div id="calPopupList"></div>
-      <button class="cal-popup-close" onclick="document.getElementById('calPopupOverlay').classList.remove('open');document.body.style.overflow='';">닫기</button>
+      <button class="cal-popup-close" id="closeCalPopupBtn">닫기</button>
     </div>
   </div>
   <!-- 신규등록 -->
@@ -697,7 +698,7 @@
       <div class="form-card-header">차량 관심 정보</div>
       <div class="form-body"><div class="grid-2">
         <div class="field"><label>모델명</label>
-          <select id="modelName" onchange="onModelChange()">
+          <select id="modelName">
             <option value="">— 모델 선택 —</option>
             <option>A-Class</option><option>CLA</option><option>GLA / GLB</option>
             <option>C-Class</option><option>E-Class</option><option>S-Class</option>
@@ -707,7 +708,7 @@
           </select>
         </div>
         <div class="field"><label>세부모델</label>
-          <select id="detailModel" disabled onchange="onDetailModelChange('detailModel','detailCustom')">
+          <select id="detailModel" disabled>
             <option value="">— 모델을 먼저 선택하세요 —</option>
           </select>
           <div class="detail-custom-wrap" id="detailCustomWrap">
@@ -767,10 +768,10 @@
     <div class="form-card">
       <div class="form-card-header care">🔧 벤츠 정기점검 관리</div>
       <div class="form-body"><div class="grid-2">
-        <div class="field"><label>최근 서비스점검일</label><input type="date" id="lastServiceDate" class="care-input" oninput="autoNextService()"/></div>
-        <div class="field"><label>최근 점검 주행거리</label><input type="text" id="lastServiceMileage" class="care-input" placeholder="예: 15000" oninput="fmtMileage(this);autoNextService()"/></div>
+        <div class="field"><label>최근 서비스점검일</label><input type="date" id="lastServiceDate" class="care-input"/></div>
+        <div class="field"><label>최근 점검 주행거리</label><input type="text" id="lastServiceMileage" class="care-input" placeholder="예: 15000"/></div>
         <div class="field"><label>현재 주행거리 확인일</label><input type="date" id="currentMileageDate" class="care-input"/></div>
-        <div class="field"><label>현재 주행거리</label><input type="text" id="currentMileage" class="care-input" placeholder="예: 14000" oninput="fmtMileage(this)"/></div>
+        <div class="field"><label>현재 주행거리</label><input type="text" id="currentMileage" class="care-input" placeholder="예: 14000"/></div>
         <div class="field"><label>다음 무상점검 예정일 <span style="font-size:10px;color:var(--text-lt);">(자동)</span></label><input type="date" id="nextServiceDate" class="auto-field" readonly/></div>
         <div class="field"><label>다음 무상점검 예정거리 <span style="font-size:10px;color:var(--text-lt);">(자동)</span></label><input type="text" id="nextServiceMileage" class="auto-field" readonly/></div>
       </div></div>
@@ -779,7 +780,7 @@
       <div class="form-card-header">계약 / 출고 정보</div>
       <div class="form-body"><div class="grid-2">
         <div class="field"><label>계약일</label><input type="date" id="contractDate"/></div>
-        <div class="field"><label>출고일</label><input type="date" id="deliveryDate" oninput="autoDeliveryMonth()" onchange="autoDeliveryMonth()"/></div>
+        <div class="field"><label>출고일</label><input type="date" id="deliveryDate" id="deliveryDateInput"/></div>
         <div class="field"><label>출고월 <span style="font-size:10px;color:var(--text-lt);">(자동)</span></label><input type="text" id="deliveryMonth" class="auto-field" readonly/></div>
       </div></div>
     </div>
@@ -787,7 +788,7 @@
       <div class="form-card-header">기타</div>
       <div class="form-body"><div class="field"><label>태그</label><input type="text" id="tags" placeholder="예: VIP, 재구매, 법인"/></div></div>
     </div>
-    <button class="btn-submit" id="submitBtn" onclick="console.log('버튼클릭');submitNew()">고객 정보 저장</button>
+    <button class="btn-submit" id="submitBtn" id="submitNewBtn">고객 정보 저장</button>
     <div class="st-msg" id="msg-new"></div>
   </div>
 
@@ -798,7 +799,7 @@
       <div class="form-card-header blue">고객 확인 (연락처로 검색)</div>
       <div class="form-body"><div class="grid-2">
         <div class="field"><label>고객명</label><input type="text" id="u-name" placeholder="홍길동"/></div>
-        <div class="field"><label>연락처 <span class="req">*</span></label><input type="tel" id="u-phone" placeholder="010-0000-0000" maxlength="13" oninput="onUPhoneInput(this)"/></div>
+        <div class="field"><label>연락처 <span class="req">*</span></label><input type="tel" id="u-phone" placeholder="010-0000-0000" maxlength="13"/></div>
       </div>
       <div class="preview-box" id="preview-box">
         <div class="preview-name" id="prev-name">—</div>
@@ -823,10 +824,10 @@
         <div class="field full"><label>추가상담내용 <span class="req">*</span></label>
           <textarea id="addConsultation" placeholder="이번 상담 내용을 입력하세요." style="min-height:130px;"></textarea></div>
         <div class="field"><label>현재 주행거리 확인일</label><input type="date" id="u-mileageDate"/></div>
-        <div class="field"><label>현재 주행거리</label><input type="text" id="u-mileage" placeholder="예: 14000" oninput="fmtMileage(this)"/></div>
+        <div class="field"><label>현재 주행거리</label><input type="text" id="u-mileage" placeholder="예: 14000"/></div>
       </div></div>
     </div>
-    <button class="btn-submit blue-btn" id="updateBtn" onclick="submitUpdate()">추가상담 저장</button>
+    <button class="btn-submit blue-btn" id="updateBtn" id="submitUpdateBtn">추가상담 저장</button>
     <div class="st-msg" id="msg-update"></div>
   </div>
 
@@ -837,17 +838,17 @@
       <div class="list-count-badge" id="list-count">0명</div>
     </div>
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="🔍 이름 또는 연락처 검색" oninput="renderList()"/>
+      <input type="text" id="searchInput" placeholder="🔍 이름 또는 연락처 검색"/>
     </div>
     <div class="backup-bar">
-      <button class="backup-btn" onclick="exportData()">📤 데이터 내보내기</button>
-      <button class="backup-btn" onclick="document.getElementById('importFile').click()">📥 데이터 가져오기</button>
-      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"/>
-      <button class="backup-btn danger" onclick="clearAllData()">🗑 전체 삭제</button>
+      <button class="backup-btn" id="exportBtn">📤 데이터 내보내기</button>
+      <button class="backup-btn" id="importTriggerBtn">📥 데이터 가져오기</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" id="importFileInput"/>
+      <button class="backup-btn danger" id="clearAllBtn">🗑 전체 삭제</button>
     </div>
     <div class="filter-bar" id="filterBar">
       <div class="filter-label" id="filterLabel">전체 고객</div>
-      <button class="filter-clear" onclick="clearFilter()">전체 보기 ✕</button>
+      <button class="filter-clear" id="clearFilterBtn">전체 보기 ✕</button>
     </div>
     <div class="year-filter-bar" id="yearFilterBar"></div>
     <div id="listContainer"></div>
@@ -867,7 +868,7 @@
         <div class="an-num" id="an-contract-cnt" style="color:var(--blue)">0</div>
         <div class="an-label" id="an-contract-lbl">계약대수</div>
       </div>
-      <div class="an-card" style="border-top:3px solid var(--purple);cursor:pointer;" onclick="showRepurchaseList()">
+      <div class="an-card" style="border-top:3px solid var(--purple);cursor:pointer;" id="repurchaseBtn">
         <div class="an-num" id="an-repurchase-cnt" style="color:var(--purple)">0</div>
         <div class="an-label">재구매 가능 고객</div>
         <div style="font-size:10px;color:var(--text-dim);margin-top:3px;">클릭하여 목록 보기</div>
@@ -877,7 +878,7 @@
       <div class="chart-card" style="padding:14px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
           <div class="chart-title" style="margin:0;">🔄 재구매 가능 고객 목록</div>
-          <button onclick="document.getElementById('repurchase-panel').style.display='none'"
+          <button id="closeRepurchaseBtn"
             style="border:none;background:var(--border);border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer;">닫기</button>
         </div>
         <div id="repurchase-list"></div>
@@ -907,11 +908,11 @@
 </div>
 
 <!-- 수정 모달 -->
-<div class="edit-overlay" id="editOverlay" onclick="editOverlayClick(event)">
+<div class="edit-overlay" id="editOverlay">
   <div class="edit-modal" id="editModal">
     <div class="edit-modal-header">
       <div class="edit-modal-title">✏️ 고객 정보 수정</div>
-      <button class="edit-modal-close" onclick="closeEdit()">✕</button>
+      <button class="edit-modal-close" id="closeEditBtn">✕</button>
     </div>
     <div class="edit-modal-body">
       <div class="form-card">
@@ -928,7 +929,7 @@
         <div class="form-card-header">차량 관심 정보</div>
         <div class="form-body"><div class="grid-2">
           <div class="field"><label>모델명</label>
-            <select id="e-modelName" onchange="onEditModelChange()">
+            <select id="e-modelName">
               <option value="">— 모델 선택 —</option>
               <option>A-Class</option><option>CLA</option><option>GLA / GLB</option>
               <option>C-Class</option><option>E-Class</option><option>S-Class</option>
@@ -938,7 +939,7 @@
             </select>
           </div>
           <div class="field"><label>세부모델</label>
-            <select id="e-detailModel" onchange="onDetailModelChange('e-detailModel','e-detailCustom')">
+            <select id="e-detailModel">
               <option value="">— 모델을 먼저 선택하세요 —</option>
             </select>
             <div class="detail-custom-wrap" id="e-detailCustomWrap">
@@ -998,10 +999,10 @@
       <div class="form-card">
         <div class="form-card-header care">🔧 벤츠 정기점검 관리</div>
         <div class="form-body"><div class="grid-2">
-          <div class="field"><label>최근 서비스점검일</label><input type="date" id="e-lastServiceDate" class="care-input" oninput="autoEditNextService()"/></div>
-          <div class="field"><label>최근 점검 주행거리</label><input type="text" id="e-lastServiceMileage" class="care-input" oninput="fmtMileage(this);autoEditNextService()"/></div>
+          <div class="field"><label>최근 서비스점검일</label><input type="date" id="e-lastServiceDate" class="care-input"/></div>
+          <div class="field"><label>최근 점검 주행거리</label><input type="text" id="e-lastServiceMileage" class="care-input"/></div>
           <div class="field"><label>현재 주행거리 확인일</label><input type="date" id="e-currentMileageDate" class="care-input"/></div>
-          <div class="field"><label>현재 주행거리</label><input type="text" id="e-currentMileage" class="care-input" oninput="fmtMileage(this)"/></div>
+          <div class="field"><label>현재 주행거리</label><input type="text" id="e-currentMileage" class="care-input"/></div>
           <div class="field"><label>다음 무상점검 예정일</label><input type="date" id="e-nextServiceDate" class="auto-field" readonly/></div>
           <div class="field"><label>다음 무상점검 예정거리</label><input type="text" id="e-nextServiceMileage" class="auto-field" readonly/></div>
         </div></div>
@@ -1010,7 +1011,7 @@
         <div class="form-card-header">계약 / 출고 정보</div>
         <div class="form-body"><div class="grid-2">
           <div class="field"><label>계약일</label><input type="date" id="e-contractDate"/></div>
-          <div class="field"><label>출고일</label><input type="date" id="e-deliveryDate" oninput="autoEditDeliveryMonth()" onchange="autoEditDeliveryMonth()"/></div>
+          <div class="field"><label>출고일</label><input type="date" id="e-deliveryDate" id="eDeliveryDateInput"/></div>
           <div class="field"><label>출고월 <span style="font-size:10px;color:var(--text-lt);">(자동)</span></label><input type="text" id="e-deliveryMonth" class="auto-field" readonly/></div>
         </div></div>
       </div>
@@ -1021,31 +1022,31 @@
     </div>
     <div class="st-msg edit-save-msg" id="edit-save-msg"></div>
     <div class="edit-modal-footer">
-      <button class="btn-edit-cancel" onclick="closeEdit()">취소</button>
-      <button class="btn-edit-save" id="editSaveBtn" onclick="submitEdit()">✅ 수정 저장</button>
+      <button class="btn-edit-cancel" id="closeEditBtn">취소</button>
+      <button class="btn-edit-save" id="editSaveBtn" id="submitEditBtn">✅ 수정 저장</button>
     </div>
   </div>
 </div>
 
 <!-- 고객 상세 오버레이 -->
-<div class="customer-detail-overlay" id="custDetailOverlay" onclick="custDetailOverlayClick(event)">
+<div class="customer-detail-overlay" id="custDetailOverlay">
   <div class="customer-detail-modal">
     <div class="edit-modal-header">
       <div class="edit-modal-title">👤 고객 상세 정보</div>
-      <button class="edit-modal-close" onclick="closeCustDetail()">✕</button>
+      <button class="edit-modal-close" id="closeCustDetailBtn">✕</button>
     </div>
     <div class="edit-modal-body" id="custDetailBody" style="padding:18px 16px 20px;"></div>
   </div>
 </div>
 
 <nav class="bottom-nav">
-  <button class="nav-btn active" id="nb-home" onclick="showView('home')"><span class="nav-icon">🏠</span><span class="nav-label">홈</span></button>
-  <button class="nav-btn" id="nb-schedule" onclick="showView('schedule')"><span class="nav-icon">🗓</span><span class="nav-label">스케줄</span></button>
-  <button class="nav-btn-plus" id="nb-plus" onclick="showView('new')">
+  <button class="nav-btn active" id="nb-home" data-view="home"><span class="nav-icon">🏠</span><span class="nav-label">홈</span></button>
+  <button class="nav-btn" id="nb-schedule" data-view="schedule"><span class="nav-icon">🗓</span><span class="nav-label">스케줄</span></button>
+  <button class="nav-btn-plus" id="nb-plus" data-view="new">
     <svg viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
   </button>
-  <button class="nav-btn" id="nb-list" onclick="showView('list')"><span class="nav-icon">👥</span><span class="nav-label">고객목록</span></button>
-  <button class="nav-btn" id="nb-more" onclick="showView('analytics')"><span class="nav-icon">📊</span><span class="nav-label">분석</span></button>
+  <button class="nav-btn" id="nb-list" data-view="list"><span class="nav-icon">👥</span><span class="nav-label">고객목록</span></button>
+  <button class="nav-btn" id="nb-more" data-view="analytics"><span class="nav-icon">📊</span><span class="nav-label">분석</span></button>
 </nav>
 
 <script>
@@ -2391,6 +2392,149 @@ function closeSchedPopup(e){if(e.target===document.getElementById('schedPopupOve
   var today=schedTodayStr();
   var sd=document.getElementById('schedAddDate');
   if(sd)sd.value=today;
+})();
+
+/* ══════════════════════════════════════
+   이벤트 리스너 통합 초기화 (CSP 대응)
+   - GitHub Pages 인라인 onclick 차단 우회
+══════════════════════════════════════ */
+(function initEvents(){
+
+  /* ── 탭 버튼 (data-view) ── */
+  document.querySelectorAll('[data-view]').forEach(function(el){
+    el.addEventListener('click', function(){ showView(el.getAttribute('data-view')); });
+  });
+
+  /* ── 고객현황 필터 카드 ── */
+  document.querySelectorAll('[data-gofilter]').forEach(function(el){
+    el.addEventListener('click', function(){ goFilter(el.getAttribute('data-gofilter')); });
+  });
+  document.querySelectorAll('[data-caref]').forEach(function(el){
+    el.addEventListener('click', function(){ goCareFilter(el.getAttribute('data-caref')); });
+  });
+
+  /* ── 캘린더 네비 ── */
+  document.querySelectorAll('[data-calmove]').forEach(function(el){
+    el.addEventListener('click', function(){ calMove(parseInt(el.getAttribute('data-calmove'))); });
+  });
+  document.querySelectorAll('[data-schedmove]').forEach(function(el){
+    el.addEventListener('click', function(){ schedMove(parseInt(el.getAttribute('data-schedmove'))); });
+  });
+
+  /* ── 오늘로 버튼 ── */
+  var calTodayBtn = document.getElementById('calTodayBtn');
+  if(calTodayBtn) calTodayBtn.addEventListener('click', goToday);
+  var schedTodayBtn = document.getElementById('schedTodayBtn');
+  if(schedTodayBtn) schedTodayBtn.addEventListener('click', schedGoToday);
+
+  /* ── 필터 초기화 ── */
+  var clearFilterBtn = document.getElementById('clearFilterBtn');
+  if(clearFilterBtn) clearFilterBtn.addEventListener('click', clearFilter);
+
+  /* ── 재구매 패널 ── */
+  var repurchaseBtn = document.getElementById('repurchaseBtn');
+  if(repurchaseBtn) repurchaseBtn.addEventListener('click', showRepurchaseList);
+  var closeRepurchaseBtn = document.getElementById('closeRepurchaseBtn');
+  if(closeRepurchaseBtn) closeRepurchaseBtn.addEventListener('click', function(){
+    document.getElementById('repurchase-panel').style.display='none';
+  });
+
+  /* ── 데이터 백업/복원 ── */
+  var exportBtn = document.getElementById('exportBtn');
+  if(exportBtn) exportBtn.addEventListener('click', exportData);
+  var importTriggerBtn = document.getElementById('importTriggerBtn');
+  if(importTriggerBtn) importTriggerBtn.addEventListener('click', function(){
+    document.getElementById('importFile').click();
+  });
+  var importFileInput = document.getElementById('importFileInput') || document.getElementById('importFile');
+  if(importFileInput) importFileInput.addEventListener('change', importData);
+  var clearAllBtn = document.getElementById('clearAllBtn');
+  if(clearAllBtn) clearAllBtn.addEventListener('click', clearAllData);
+
+  /* ── 저장 버튼들 ── */
+  var submitNewBtn = document.getElementById('submitNewBtn');
+  if(submitNewBtn) submitNewBtn.addEventListener('click', submitNew);
+  var submitUpdateBtn = document.getElementById('submitUpdateBtn');
+  if(submitUpdateBtn) submitUpdateBtn.addEventListener('click', submitUpdate);
+  var submitEditBtn = document.getElementById('submitEditBtn');
+  if(submitEditBtn) submitEditBtn.addEventListener('click', submitEdit);
+
+  /* ── 스케줄 추가 ── */
+  var schedAddBtn = document.getElementById('schedAddBtn');
+  if(schedAddBtn) schedAddBtn.addEventListener('click', schedAddTask);
+  var schedAddText = document.getElementById('schedAddText');
+  if(schedAddText) schedAddText.addEventListener('keydown', function(e){
+    if(e.key==='Enter') schedAddTask();
+  });
+
+  /* ── 모달 닫기 버튼 ── */
+  var closeEditBtns = document.querySelectorAll('[id="closeEditBtn"], .edit-modal-close');
+  closeEditBtns.forEach(function(btn){ btn.addEventListener('click', closeEdit); });
+  var closeEditCancelBtn = document.querySelector('.btn-edit-cancel');
+  if(closeEditCancelBtn) closeEditCancelBtn.addEventListener('click', closeEdit);
+  var closeCustDetailBtn = document.getElementById('closeCustDetailBtn');
+  if(closeCustDetailBtn) closeCustDetailBtn.addEventListener('click', closeCustDetail);
+  var closeCalPopupBtn = document.getElementById('closeCalPopupBtn');
+  if(closeCalPopupBtn) closeCalPopupBtn.addEventListener('click', function(){
+    document.getElementById('calPopupOverlay').classList.remove('open');
+    document.body.style.overflow='';
+  });
+  var closeSchedPopupBtn = document.getElementById('closeSchedPopupBtn');
+  if(closeSchedPopupBtn) closeSchedPopupBtn.addEventListener('click', function(){
+    document.getElementById('schedPopupOverlay').classList.remove('open');
+    document.body.style.overflow='';
+  });
+
+  /* ── 오버레이 배경 클릭 닫기 ── */
+  var editOverlay = document.getElementById('editOverlay');
+  if(editOverlay) editOverlay.addEventListener('click', editOverlayClick);
+  var custDetailOverlay = document.getElementById('custDetailOverlay');
+  if(custDetailOverlay) custDetailOverlay.addEventListener('click', custDetailOverlayClick);
+  var calPopupOverlay = document.getElementById('calPopupOverlay');
+  if(calPopupOverlay) calPopupOverlay.addEventListener('click', closeCalPopup);
+  var schedPopupOverlay = document.getElementById('schedPopupOverlay');
+  if(schedPopupOverlay) schedPopupOverlay.addEventListener('click', closeSchedPopup);
+
+  /* ── 폼 입력 ── */
+  var phoneInput = document.getElementById('phone');
+  if(phoneInput) phoneInput.addEventListener('input', function(){ fmtP(this); });
+  var uPhoneInput = document.getElementById('u-phone');
+  if(uPhoneInput) uPhoneInput.addEventListener('input', function(){ onUPhoneInput(this); });
+
+  /* ── 마일리지 입력 ── */
+  ['lastServiceMileage','currentMileage','e-lastServiceMileage','e-currentMileage','u-mileage'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.addEventListener('input', function(){ fmtMileage(this); });
+  });
+  var lsdEl = document.getElementById('lastServiceDate');
+  if(lsdEl) lsdEl.addEventListener('input', function(){ autoNextService(); });
+  var lsmEl = document.getElementById('lastServiceMileage');
+  if(lsmEl) lsmEl.addEventListener('input', function(){ autoNextService(); });
+  var elsdEl = document.getElementById('e-lastServiceDate');
+  if(elsdEl) elsdEl.addEventListener('input', function(){ autoEditNextService(); });
+  var elsmEl = document.getElementById('e-lastServiceMileage');
+  if(elsmEl) elsmEl.addEventListener('input', function(){ autoEditNextService(); });
+
+  /* ── 출고일 → 출고월 자동 ── */
+  var ddInput = document.getElementById('deliveryDateInput') || document.getElementById('deliveryDate');
+  if(ddInput) { ddInput.addEventListener('input', autoDeliveryMonth); ddInput.addEventListener('change', autoDeliveryMonth); }
+  var eddInput = document.getElementById('eDeliveryDateInput') || document.getElementById('e-deliveryDate');
+  if(eddInput) { eddInput.addEventListener('input', autoEditDeliveryMonth); eddInput.addEventListener('change', autoEditDeliveryMonth); }
+
+  /* ── 모델 선택 ── */
+  var modelSel = document.getElementById('modelName');
+  if(modelSel) modelSel.addEventListener('change', onModelChange);
+  var eModelSel = document.getElementById('e-modelName');
+  if(eModelSel) eModelSel.addEventListener('change', onEditModelChange);
+  var detailSel = document.getElementById('detailModel');
+  if(detailSel) detailSel.addEventListener('change', function(){ onDetailModelChange('detailModel','detailCustom'); });
+  var eDetailSel = document.getElementById('e-detailModel');
+  if(eDetailSel) eDetailSel.addEventListener('change', function(){ onDetailModelChange('e-detailModel','e-detailCustom'); });
+
+  /* ── 검색 ── */
+  var searchInput = document.getElementById('searchInput');
+  if(searchInput) searchInput.addEventListener('input', renderList);
+
 })();
 
 </script>
