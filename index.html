@@ -525,6 +525,36 @@
     @media(max-width:640px){
       .fab-top{right:14px;bottom:20px;width:42px;height:42px;font-size:18px;}
     }
+
+    /* ── 연락 메모 / 체크리스트 ── */
+    .contact-memo-wrap{display:flex;flex-direction:column;gap:6px;}
+    .checklist-row{
+      display:flex;flex-wrap:wrap;gap:6px;
+      background:var(--surface2);border:1px solid var(--border);
+      border-radius:10px;padding:10px 12px;
+    }
+    .check-item{
+      display:flex;align-items:center;gap:5px;
+      font-size:12px;font-weight:600;color:var(--text-dim);
+      cursor:pointer;padding:4px 8px;border-radius:20px;
+      border:1px solid var(--border);background:#fff;
+      transition:all .15s;user-select:none;
+    }
+    .check-item:hover{border-color:var(--gold);color:var(--gold-dk);}
+    .check-item input[type="checkbox"]{
+      width:14px;height:14px;accent-color:var(--gold);cursor:pointer;
+    }
+    .check-item:has(input:checked){
+      background:var(--gold);color:#fff;border-color:var(--gold);
+    }
+    .check-item:has(input:checked) input{accent-color:#fff;}
+    .memo-preview{
+      display:none;font-size:12px;color:var(--text-dim);
+      background:#fffbe8;border:1px solid #ffe97a;border-radius:8px;
+      padding:8px 12px;margin-top:4px;line-height:1.6;
+    }
+    .memo-preview.show{display:block;}
+    .memo-preview strong{color:var(--gold-dk);}
   </style>
 </head>
 <body>
@@ -799,6 +829,26 @@
         </div>
         <div class="field full"><label>상담내용</label><textarea id="consultation" placeholder="상담 내용을 입력하세요."></textarea></div>
         <div class="field"><label>다음연락일</label><input type="date" id="nextContact"/></div>
+        <div class="field full" style="margin-top:4px;">
+          <label>📋 연락 메모 <span style="font-size:10px;color:var(--text-lt);">(달력에 자동 표시)</span></label>
+          <div class="contact-memo-wrap" id="contactMemoWrap">
+            <!-- 체크리스트 -->
+            <div class="checklist-row">
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="" value="구매의사 확인"> 구매의사 확인</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="" value="시승 가능 여부"> 시승 가능 여부</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="" value="서류 준비 확인"> 서류 준비 확인</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="" value="금융 조건 협의"> 금융 조건 협의</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="" value="계약서 작성"> 계약서 작성</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="" value="출고 일정 확인"> 출고 일정 확인</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="" value="보험 안내"> 보험 안내</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="" value="AS 예약 안내"> AS 예약 안내</label>
+            </div>
+            <!-- 직접입력 -->
+            <input type="text" id="contactMemo" placeholder="직접 입력 (예: 할부 조건 재확인, 색상 변경 문의 등)" style="margin-top:8px;"/>
+            <!-- 미리보기 -->
+            <div class="memo-preview" id="memoPreview"></div>
+          </div>
+        </div>
       </div></div>
     </div>
     <div class="form-card">
@@ -868,6 +918,26 @@
           </select>
         </div>
         <div class="field"><label>다음연락일</label><input type="date" id="u-next"/></div>
+        <div class="field full" style="margin-top:4px;">
+          <label>📋 연락 메모 <span style="font-size:10px;color:var(--text-lt);">(달력에 자동 표시)</span></label>
+          <div class="contact-memo-wrap" id="u-contactMemoWrap">
+            <!-- 체크리스트 -->
+            <div class="checklist-row">
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="u-" value="구매의사 확인"> 구매의사 확인</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="u-" value="시승 가능 여부"> 시승 가능 여부</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="u-" value="서류 준비 확인"> 서류 준비 확인</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="u-" value="금융 조건 협의"> 금융 조건 협의</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="u-" value="계약서 작성"> 계약서 작성</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="u-" value="출고 일정 확인"> 출고 일정 확인</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="u-" value="보험 안내"> 보험 안내</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="u-" value="AS 예약 안내"> AS 예약 안내</label>
+            </div>
+            <!-- 직접입력 -->
+            <input type="text" id="u-contactMemo" placeholder="직접 입력 (예: 할부 조건 재확인, 색상 변경 문의 등)" style="margin-top:8px;"/>
+            <!-- 미리보기 -->
+            <div class="memo-preview" id="u-memoPreview"></div>
+          </div>
+        </div>
         <div class="field full"><label>추가상담내용 <span class="req">*</span></label>
           <textarea id="addConsultation" placeholder="이번 상담 내용을 입력하세요." style="min-height:130px;"></textarea></div>
         <div class="field"><label>현재 주행거리 확인일</label><input type="date" id="u-mileageDate"/></div>
@@ -1031,6 +1101,26 @@
           </div>
           <div class="field full"><label>상담내용</label><textarea id="e-consultation" style="min-height:100px;"></textarea></div>
           <div class="field"><label>다음연락일</label><input type="date" id="e-nextContact"/></div>
+        <div class="field full" style="margin-top:4px;">
+          <label>📋 연락 메모 <span style="font-size:10px;color:var(--text-lt);">(달력에 자동 표시)</span></label>
+          <div class="contact-memo-wrap" id="e-contactMemoWrap">
+            <!-- 체크리스트 -->
+            <div class="checklist-row">
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="e-" value="구매의사 확인"> 구매의사 확인</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="e-" value="시승 가능 여부"> 시승 가능 여부</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="e-" value="서류 준비 확인"> 서류 준비 확인</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="e-" value="금융 조건 협의"> 금융 조건 협의</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="e-" value="계약서 작성"> 계약서 작성</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="e-" value="출고 일정 확인"> 출고 일정 확인</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="e-" value="보험 안내"> 보험 안내</label>
+              <label class="check-item"><input type="checkbox" class="memo-check" data-prefix="e-" value="AS 예약 안내"> AS 예약 안내</label>
+            </div>
+            <!-- 직접입력 -->
+            <input type="text" id="e-contactMemo" placeholder="직접 입력 (예: 할부 조건 재확인, 색상 변경 문의 등)" style="margin-top:8px;"/>
+            <!-- 미리보기 -->
+            <div class="memo-preview" id="e-memoPreview"></div>
+          </div>
+        </div>
         </div></div>
       </div>
       <div class="form-card">
@@ -1367,7 +1457,7 @@ function buildCalEvents(list){
   var now=todayD();
   list.forEach(function(c){
     var name=c.customerName||"(이름없음)",phone=c.phone||"";
-    if(c.nextContact)addEv(c.nextContact,{type:"contact",name:name,phone:phone,label:"📞 연락: "+name,dotColor:"#1055a8"});
+    if(c.nextContact){var _calLbl="📞 연락: "+name;if(c.nextContactMemo)_calLbl+=" — "+c.nextContactMemo;addEv(c.nextContact,{type:"contact",name:name,phone:phone,label:_calLbl,dotColor:"#1055a8"});}
     if(c.insuranceExpireDate)addEv(c.insuranceExpireDate,{type:"insurance",name:name,phone:phone,label:"🛡 보험만기: "+name,dotColor:"#c05800"});
     if(c.inspectionDueDate)addEv(c.inspectionDueDate,{type:"inspection",name:name,phone:phone,label:"🔧 자동차검사: "+name,dotColor:"#a03800"});
     if(c.financeEndDate)addEv(c.financeEndDate,{type:"finance",name:name,phone:phone,label:"💳 금융종료: "+name,dotColor:"#a01515"});
@@ -1537,7 +1627,7 @@ function cItem(c,df){
   return'<div class="contact-item">'+
     '<div style="min-width:0;flex:1;">'+
       '<div class="c-name clickable-name" data-phone="'+safePhone+'" data-cname="'+safeName+'">'+esc(c.customerName)+'</div>'+
-      '<div class="c-meta">'+esc(model||"모델미정")+' | <span class="badge '+sc(c.status)+'">'+esc(sd)+'</span> | D-'+df+'일</div>'+
+      '<div class="c-meta">'+esc(model||"모델미정")+memoTxt+' | <span class="badge '+sc(c.status)+'">'+esc(sd)+'</span> | D-'+df+'일</div>'+
     '</div>'+
     '<a class="call-btn" href="tel:'+esc(c.phone)+'">📞 전화</a>'+
   '</div>';
@@ -1629,6 +1719,7 @@ function buildCard(c,idx){
   if(model)html+='<span class="chip">'+esc(model)+'</span>';
   if(c.region)html+='<span class="chip">📍'+esc(c.region)+'</span>';
   if(c.nextContact)html+='<span class="chip">📅 '+esc(c.nextContact)+'</span>';
+  if(c.nextContactMemo)html+='<span class="chip" style="background:#fffbe8;color:#8a6000;">📋 '+esc(c.nextContactMemo)+'</span>';
   if(c.leadSource)html+='<span class="chip">'+esc(c.leadSource)+'</span>';
 
   if(currentCareFilter==="birthday7"&&c.birthDate){var bd=bdayDiff(c.birthDate);html+='<span class="chip" style="background:#f0e5ff;color:var(--purple);font-weight:700;">🎂 생일 '+esc(c.birthDate)+(bd!==null?' D-'+bd:'')+'</span>';}
@@ -1760,6 +1851,7 @@ function submitNew(){
     status:document.getElementById("status").value,
     consultation:document.getElementById("consultation").value.trim(),
     nextContact:document.getElementById("nextContact").value,
+    nextContactMemo:buildMemoText(''),
     insuranceStartDate:document.getElementById("insuranceStartDate").value,
     insuranceExpireDate:document.getElementById("insuranceExpireDate").value,
     inspectionDueDate:document.getElementById("inspectionDueDate").value,
@@ -1806,6 +1898,7 @@ function resetNewForm(){
   var dcInp=document.getElementById("detailCustom");var dcWrap=document.getElementById("detailCustomWrap");
   if(dcInp)dcInp.value="";if(dcWrap)dcWrap.classList.remove("visible");
   ["purchaseMethod","leadSource","status"].forEach(function(id){var el=document.getElementById(id);if(el)el.selectedIndex=0;});
+  resetMemo('');
 }
 
 // ── 추가상담 저장 ────────────────────────────────────────────
@@ -1829,6 +1922,8 @@ function submitUpdate(){
   var mm=document.getElementById("u-mileage").value;
   if(st)c.status=st;
   if(nc)c.nextContact=nc;
+  var uMemo=buildMemoText('u-');
+  if(uMemo)c.nextContactMemo=uMemo;
   if(md)c.currentMileageDate=md;
   if(mm)c.currentMileage=mm;
   c._updatedAt=now;
@@ -1837,6 +1932,7 @@ function submitUpdate(){
     showMsg("msg-update","ok","✅ 추가상담이 저장되었습니다.");
     ["u-name","u-phone","u-next","addConsultation","u-mileageDate","u-mileage"].forEach(function(id){var el=document.getElementById(id);if(el)el.value="";});
     document.getElementById("u-status").selectedIndex=0;
+    resetMemo('u-');
     document.getElementById("preview-box").classList.remove("show");
     document.getElementById("nofound").classList.remove("show");
   }catch(e){
@@ -1856,7 +1952,9 @@ function openEditByIdx(idx){
   sv("e-purchaseMethod",c.purchaseMethod);sv("e-budget",c.budget);
   sv("e-purchaseTiming",c.purchaseTiming);sv("e-leadSource",c.leadSource);
   sv("e-status",c.status);sv("e-consultation",c.consultation);
-  sv("e-nextContact",c.nextContact);sv("e-insuranceStartDate",c.insuranceStartDate);
+  sv("e-nextContact",c.nextContact);
+  setTimeout(function(){setMemoToForm('e-',c.nextContactMemo||"");},50);
+  sv("e-insuranceStartDate",c.insuranceStartDate);
   sv("e-insuranceExpireDate",c.insuranceExpireDate);sv("e-inspectionDueDate",c.inspectionDueDate);
   sv("e-financeStartDate",c.financeStartDate);sv("e-financeEndDate",c.financeEndDate);
   sv("e-contractDate",c.contractDate);sv("e-deliveryDate",c.deliveryDate);
@@ -1925,6 +2023,7 @@ function submitEdit(){
     status:document.getElementById("e-status").value,
     consultation:document.getElementById("e-consultation").value.trim(),
     nextContact:document.getElementById("e-nextContact").value,
+    nextContactMemo:buildMemoText('e-'),
     insuranceStartDate:document.getElementById("e-insuranceStartDate").value,
     insuranceExpireDate:document.getElementById("e-insuranceExpireDate").value,
     inspectionDueDate:document.getElementById("e-inspectionDueDate").value,
@@ -2293,7 +2392,11 @@ function buildSchedCRMEvents(list, year){
       var key=getCrmDoneId(dateStr,type,name);
       return {type:type,label:label,phone:phone,cls:cls+(crmDoneMap[key]?' ev-done':''),crm:true,done:!!crmDoneMap[key],name:name};
     }
-    if(c.nextContact)         addEv(c.nextContact,         makeCrmEv(normalizeDateStr(c.nextContact),'contact','📞 연락: '+name,'ev-contact'));
+    if(c.nextContact){
+      var contactLabel = '📞 연락: '+name;
+      if(c.nextContactMemo) contactLabel += ' — '+c.nextContactMemo;
+      addEv(c.nextContact, makeCrmEv(normalizeDateStr(c.nextContact),'contact',contactLabel,'ev-contact'));
+    }
     if(c.insuranceExpireDate) addEv(c.insuranceExpireDate, makeCrmEv(normalizeDateStr(c.insuranceExpireDate),'insurance','🛡 보험: '+name,'ev-insurance'));
     if(c.inspectionDueDate)   addEv(c.inspectionDueDate,   makeCrmEv(normalizeDateStr(c.inspectionDueDate),'inspection','🔧 검사: '+name,'ev-inspection'));
     if(c.financeEndDate)      addEv(c.financeEndDate,      makeCrmEv(normalizeDateStr(c.financeEndDate),'finance','💳 금융: '+name,'ev-finance'));
@@ -2726,8 +2829,78 @@ function initEvents(){
     }, {passive:true});
   }
 })();
+
+/* ══════════════════════════════════════
+   연락 메모 / 체크리스트 기능
+══════════════════════════════════════ */
+
+/* 체크리스트 + 직접입력 → 최종 메모 문자열 생성 */
+function buildMemoText(prefix){
+  var checks = document.querySelectorAll('.memo-check[data-prefix="'+prefix+'"]:checked');
+  var parts = [];
+  checks.forEach(function(chk){ parts.push(chk.value); });
+  var direct = (document.getElementById(prefix+'contactMemo')||{}).value||'';
+  direct = direct.trim();
+  if(direct) parts.push(direct);
+  return parts.join(', ');
+}
+
+/* 미리보기 업데이트 */
+function updateMemoPreview(prefix){
+  var text = buildMemoText(prefix);
+  var preview = document.getElementById(prefix+'memoPreview');
+  if(!preview) return;
+  if(text){
+    preview.innerHTML = '<strong>📅 달력 표시:</strong> ' + esc(text);
+    preview.classList.add('show');
+  } else {
+    preview.classList.remove('show');
+  }
+}
+
+/* 메모 초기화 */
+function resetMemo(prefix){
+  var checks = document.querySelectorAll('.memo-check[data-prefix="'+prefix+'"]');
+  checks.forEach(function(chk){ chk.checked = false; });
+  var inp = document.getElementById(prefix+'contactMemo');
+  if(inp) inp.value = '';
+  updateMemoPreview(prefix);
+}
+
+/* 메모 값 불러와서 폼에 세팅 (수정 모달용) */
+function setMemoToForm(prefix, memoText){
+  if(!memoText) return;
+  var parts = memoText.split(', ');
+  var checks = document.querySelectorAll('.memo-check[data-prefix="'+prefix+'"]');
+  var remaining = [];
+  parts.forEach(function(p){
+    var found = false;
+    checks.forEach(function(chk){
+      if(chk.value === p){ chk.checked = true; found = true; }
+    });
+    if(!found) remaining.push(p);
+  });
+  var inp = document.getElementById(prefix+'contactMemo');
+  if(inp) inp.value = remaining.join(', ');
+  updateMemoPreview(prefix);
+}
+
+/* 체크리스트/직접입력 이벤트 바인딩 */
+function bindMemoEvents(prefix){
+  var checks = document.querySelectorAll('.memo-check[data-prefix="'+prefix+'"]');
+  checks.forEach(function(chk){
+    chk.addEventListener('change', function(){ updateMemoPreview(prefix); });
+  });
+  var inp = document.getElementById(prefix+'contactMemo');
+  if(inp) inp.addEventListener('input', function(){ updateMemoPreview(prefix); });
+}
+
 document.addEventListener('DOMContentLoaded', function(){
   initEvents();
+  /* 메모 이벤트 바인딩 */
+  bindMemoEvents('');
+  bindMemoEvents('u-');
+  bindMemoEvents('e-');
 });
 
 </script>
