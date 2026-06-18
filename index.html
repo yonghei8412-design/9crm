@@ -1515,9 +1515,9 @@ function renderList(){
     if(currentFilter==="출고"){
       var nowKST2=new Date(new Date().getTime()+9*3600000);
       var thisYr2=nowKST2.getUTCFullYear();
-      var yrBtns='<button class="yr-btn'+(currentDeliveryYear===""?" active":"")+'" onclick="setDeliveryYear(\'\')">전체</button>';
+      var yrBtns='<button class="yr-btn'+(currentDeliveryYear===""?' active':'')+"' data-delyear=''>전체</button>";
       for(var yr=thisYr2;yr>=2017;yr--)
-        yrBtns+='<button class="yr-btn'+(currentDeliveryYear===String(yr)?" active":"")+'" onclick="setDeliveryYear(\''+yr+'\')">'+yr+'</button>';
+        yrBtns+='<button class="yr-btn'+(currentDeliveryYear===String(yr)?' active':'')+"' data-delyear='"+yr+"'>"+yr+"</button>";
       yfBar.innerHTML=yrBtns;yfBar.classList.add("visible");
     } else {yfBar.classList.remove("visible");yfBar.innerHTML="";}
   }
@@ -1568,7 +1568,7 @@ function buildCard(c,idx){
     '</div>'+
     '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px;">'+
       '<span class="badge '+sc(c.status)+'">'+esc(sd)+'</span>'+
-      '<button class="edit-btn" onclick="openEditByIdx('+idx+')">✏️ 수정</button>'+
+      '<button class="edit-btn" data-edit-idx="'+idx+'">✏️ 수정</button>'+
     '</div>'+
   '</div>';
   html+='<div class="chip-row">';
@@ -1590,7 +1590,7 @@ function buildCard(c,idx){
   else if((currentCareFilter==="delivery1yr"||currentCareFilter==="delivery3yr")&&c.deliveryDate){var delD=parseD(c.deliveryDate);var elp2=delD?Math.round((todayD()-delD)/86400000):0;html+='<span class="chip" style="background:#e3f7ec;color:var(--green);font-weight:700;">🚗 출고 '+esc(c.deliveryDate)+' ('+Math.floor(elp2/365)+'년 경과)</span>';}
   html+='</div>';
 
-  html+='<button class="tog-btn" onclick="togDet(this,\''+did+'\')" aria-expanded="false">상세정보 보기 <span class="tog-arr">▼</span></button>';
+  html+='<button class="tog-btn" data-togdet="'+did+'" aria-expanded="false">상세정보 보기 <span class="tog-arr">▼</span></button>';
   html+='<div class="detail-body" id="'+did+'">';
   html+='<div class="d-sec">구매 정보</div>';
   if(c.purchaseMethod)html+=dr("구매방식",c.purchaseMethod);
@@ -1600,7 +1600,7 @@ function buildCard(c,idx){
   if(c.consultation)html+='<div class="d-row"><span class="d-key">상담내용</span><span class="d-val">'+esc(c.consultation)+'</span></div>';
   if(c.tags)html+=dr("태그",c.tags);
   if(hasCare){
-    html+='<button class="care-tog tog-btn" onclick="togCare(this,\''+cid+'\')" aria-expanded="false">🚗 차량관리 / 점검 정보 보기 <span class="tog-arr">▼</span></button>';
+    html+='<button class="care-tog tog-btn" data-togcare="'+cid+'" aria-expanded="false">🚗 차량관리 / 점검 정보 보기 <span class="tog-arr">▼</span></button>';
     html+='<div class="care-detail" id="'+cid+'">';
     html+='<div class="d-sec care">차량관리 / 금융관리</div>';
     if(c.birthDate){var bd2=bdayDiff(c.birthDate);var bdLbl=esc(c.birthDate)+(bd2!==null&&bd2<=7?'<span class="dd urg"> D-'+bd2+'</span>':"");html+='<div class="d-row"><span class="d-key">생년월일</span><span class="d-val">'+bdLbl+'</span></div>';}
@@ -2096,9 +2096,9 @@ function renderAnalytics(){
   if(!_anYear)_anYear=String(thisYear);
   var yfEl=document.getElementById("an-year-filter");
   if(yfEl){
-    var btns='<button class="an-yr-btn'+(_anYear===String(thisYear)?" active":"")+'" onclick="setAnYear(\''+thisYear+'\')">'+thisYear+'</button>';
-    for(var py=thisYear-1;py>=thisYear-3;py--)btns+='<button class="an-yr-btn'+(_anYear===String(py)?" active":"")+'" onclick="setAnYear(\''+py+'\')">'+py+'</button>';
-    btns+='<button class="an-yr-btn'+(_anYear===""?" active":"")+'" onclick="setAnYear(\'\')">전체</button>';
+    var btns='<button class="an-yr-btn'+(_anYear===String(thisYear)?' active':'')+"' data-anyear='"+thisYear+"'>"+thisYear+"</button>";
+    for(var py=thisYear-1;py>=thisYear-3;py--)btns+='<button class="an-yr-btn'+(_anYear===String(py)?' active':'')+"' data-anyear='"+py+"'>"+py+"</button>";
+    btns+='<button class="an-yr-btn'+(_anYear===''?' active':'')+"' data-anyear=''>전체</button>";
     yfEl.innerHTML=btns;
   }
   var yrStr=_anYear;
@@ -2376,7 +2376,7 @@ function openSchedPopup(dateStr,evs){
     html+='<div class="sched-popup-text'+(ev.done?' done':'')+'">'+esc(ev.label)+'</div>';
     if(ev.phone)html+='<a class="sched-popup-phone" href="tel:'+esc(ev.phone)+'">📞 '+esc(ev.phone)+'</a>';
     html+='</div>';
-    if(ev.custom)html+='<button class="sched-check'+(ev.done?' checked':'')+'" data-sched-done="'+ev.id+'" onclick="schedToggleDone(''+ev.id+'')">'+(ev.done?'✓':'')+'</button>';
+    if(ev.custom)html+='<button class="sched-check'+(ev.done?' checked':'')+'" data-sched-done="'+ev.id+'">'+(ev.done?'✓':'')+'</button>';
     html+='</div>';
   });
   document.getElementById('schedPopupList').innerHTML=html;
