@@ -1624,6 +1624,7 @@ function cItem(c,df){
   var sd=c.status||"—";
   var safePhone=(c.phone||"").replace(/"/g,"&quot;");
   var safeName=(c.customerName||"").replace(/"/g,"&quot;");
+  var memoTxt=c.nextContactMemo?(' <span style="font-size:11px;color:var(--gold-dk);">📋 '+esc(c.nextContactMemo)+'</span>'):'';
   return'<div class="contact-item">'+
     '<div style="min-width:0;flex:1;">'+
       '<div class="c-name clickable-name" data-phone="'+safePhone+'" data-cname="'+safeName+'">'+esc(c.customerName)+'</div>'+
