@@ -458,12 +458,15 @@
     .ev-birthday{background:#f5e8ff;color:#620080;border-left:3px solid #9933cc;}
     .ev-delivery1{background:#ddf5e8;color:#0a5528;border-left:3px solid #22aa55;}
     .ev-delivery3{background:#fde8e8;color:#8a0000;border-left:3px solid #cc2222;}
-    .ev-custom-0{background:#e8f0ff;color:#1a3a8a;border-left:3px solid #4466cc;}
-    .ev-custom-1{background:#fff0e8;color:#8a3a00;border-left:3px solid #cc6622;}
-    .ev-custom-2{background:#e8ffe8;color:#0a5a0a;border-left:3px solid #22aa22;}
-    .ev-custom-3{background:#fff8e0;color:#7a6000;border-left:3px solid #ccaa22;}
-    .ev-custom-4{background:#f0e8ff;color:#4a0a8a;border-left:3px solid #7733cc;}
-    .ev-custom-5{background:#e8ffff;color:#0a5a5a;border-left:3px solid #22aaaa;}
+    /* 카테고리별 색상 */
+    .ev-custom-0{background:#ddeeff;color:#1a4a8a;border-left:3px solid #3a7acc;}   /* 고객연락 - 파랑 */
+    .ev-custom-1{background:#fff0dd;color:#8a4a00;border-left:3px solid #cc7a22;}   /* 상담/미팅 - 주황 */
+    .ev-custom-2{background:#e3f7ec;color:#0a5528;border-left:3px solid #22aa55;}   /* 계약업무 - 초록 */
+    .ev-custom-3{background:#fff8e0;color:#7a6000;border-left:3px solid #ccaa22;}   /* 출고준비 - 노랑 */
+    .ev-custom-4{background:#f0e8ff;color:#4a0a8a;border-left:3px solid #7733cc;}   /* 사무처리 - 보라 */
+    .ev-custom-5{background:#fde8e8;color:#8a1818;border-left:3px solid #cc3333;}   /* 전시장업무 - 빨강 */
+    .ev-custom-6{background:#e8ffff;color:#0a5a5a;border-left:3px solid #22aaaa;}   /* 보고/정산 - 청록 */
+    .ev-custom-7{background:#fff8e0;color:#8a6000;border-left:3px solid #e8a020;box-shadow:inset 2px 0 0 #e8a020;}   /* 중요 - 골드 */
     .ev-done{opacity:.42;text-decoration:line-through;}
     .cal-event .del-btn{display:none;position:absolute;right:3px;top:50%;transform:translateY(-50%);font-size:9px;color:rgba(0,0,0,.45);cursor:pointer;font-weight:900;background:rgba(255,255,255,.8);border-radius:50%;width:13px;height:13px;align-items:center;justify-content:center;line-height:1;}
     .cal-event{position:relative;}
@@ -492,6 +495,34 @@
     .today-btn:hover{background:var(--black);color:#fff;border-color:var(--black);}
     @media(max-width:900px){.stat-bar{grid-template-columns:repeat(2,1fr);}}
     @media(max-width:640px){.add-bar{flex-wrap:wrap;gap:8px;}.stat-bar{gap:8px;}.scheduleView .cal-cell{min-height:80px;}}
+
+    /* ── 맨 위로 버튼 ── */
+    .btn-top{
+      display:block;width:100%;margin-top:10px;padding:13px;
+      border:1.5px solid var(--border2);border-radius:var(--radius);
+      background:var(--surface);color:var(--text-dim);
+      font-family:var(--font);font-size:14px;font-weight:700;
+      cursor:pointer;transition:all .15s;letter-spacing:.3px;
+    }
+    .btn-top:hover{background:var(--black);color:#fff;border-color:var(--black);}
+    .btn-top:active{transform:scale(.99);}
+
+    /* ── 우측 하단 플로팅 맨위로 버튼 (전체 페이지용) ── */
+    .fab-top{
+      display:none;position:fixed;right:20px;bottom:100px;z-index:300;
+      width:46px;height:46px;border-radius:50%;
+      background:var(--black);color:#fff;border:none;
+      font-size:20px;font-weight:700;cursor:pointer;
+      box-shadow:0 4px 16px rgba(0,0,0,.25);
+      align-items:center;justify-content:center;
+      transition:opacity .2s,transform .2s;
+    }
+    .fab-top.visible{display:flex;}
+    .fab-top:hover{background:#333;transform:translateY(-2px);}
+    .fab-top:active{transform:scale(.92);}
+    @media(max-width:640px){
+      .fab-top{right:14px;bottom:20px;width:42px;height:42px;font-size:18px;}
+    }
   </style>
 </head>
 <body>
@@ -601,12 +632,14 @@
       <input class="add-input" id="schedAddText" placeholder="할 일 입력... (Enter)"/>
       <input class="add-date-input" type="date" id="schedAddDate"/>
       <select class="add-color-select" id="schedAddColor">
-        <option value="0">🔵 파랑</option>
-        <option value="1">🟠 주황</option>
-        <option value="2">🟢 초록</option>
-        <option value="3">🟡 노랑</option>
-        <option value="4">🟣 보라</option>
-        <option value="5">🩵 하늘</option>
+        <option value="0">📞 고객연락</option>
+        <option value="1">🤝 상담/미팅</option>
+        <option value="2">📝 계약업무</option>
+        <option value="3">🚗 출고준비</option>
+        <option value="4">💼 사무처리</option>
+        <option value="5">🏢 전시장업무</option>
+        <option value="6">📊 보고/정산</option>
+        <option value="7">⭐ 중요</option>
       </select>
       <button class="add-btn" id="schedAddBtn">+ 추가</button>
     </div>
@@ -620,7 +653,14 @@
       <div class="legend-item"><div class="legend-dot" style="background:#9933cc;"></div>생일</div>
       <div class="legend-item"><div class="legend-dot" style="background:#22aa55;"></div>출고1년↑</div>
       <div class="legend-item"><div class="legend-dot" style="background:#cc2222;"></div>출고3년↑</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#4466cc;"></div>직접 입력</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#3a7acc;"></div>고객연락</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#cc7a22;"></div>상담/미팅</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#22aa55;"></div>계약업무</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ccaa22;"></div>출고준비</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7733cc;"></div>사무처리</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#cc3333;"></div>전시장업무</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#22aaaa;"></div>보고/정산</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e8a020;"></div>⭐ 중요</div>
     </div>
     <!-- 달력 -->
     <div class="cal-grid">
@@ -790,6 +830,7 @@
     </div>
     <button class="btn-submit" id="submitNewBtn">고객 정보 저장</button>
     <div class="st-msg" id="msg-new"></div>
+    <button class="btn-top" id="scrollTopBtn" title="맨 위로">↑ 맨 위로</button>
   </div>
 
   <!-- 추가상담 -->
@@ -2302,7 +2343,11 @@ function renderSchedCalendar(){
 
     var crmEvs=(!isOther&&crmEvMap[fullDate])||[];
     var custEvs=custom.filter(function(t){return t.date===fullDate;});
-    var allEvs=crmEvs.concat(custEvs.map(function(t){return{type:'custom',label:t.text,cls:'ev-custom-'+t.color,id:t.id,done:t.done,custom:true};}));
+    var allEvs=crmEvs.concat(custEvs.map(function(t){
+      var catLabel=t.category||(CAT_LABELS[t.color]||'📋');
+      var icon=catLabel.split(' ')[0]||'📋';
+      return{type:'custom',label:icon+' '+t.text,cls:'ev-custom-'+(t.color||0),id:t.id,done:t.done,custom:true,category:catLabel};
+    }));
 
     if(!isOther){
       statTotal+=allEvs.length;
@@ -2363,14 +2408,20 @@ function renderSchedCalendar(){
 }
 
 /* 일정 추가 */
+var CAT_LABELS=['📞 고객연락','🤝 상담/미팅','📝 계약업무','🚗 출고준비','💼 사무처리','🏢 전시장업무','📊 보고/정산','⭐ 중요'];
 function schedAddTask(){
   var text=document.getElementById('schedAddText').value.trim();
   var date=document.getElementById('schedAddDate').value;
-  var color=document.getElementById('schedAddColor').value;
+  var color=parseInt(document.getElementById('schedAddColor').value)||0;
   if(!text){document.getElementById('schedAddText').focus();return;}
   if(!date){date=schedTodayStr();document.getElementById('schedAddDate').value=date;}
   var list=loadSched();
-  list.push({id:Date.now()+'_'+Math.random().toString(36).slice(2),text:text,date:date,color:+color,done:false});
+  list.push({
+    id:Date.now()+'_'+Math.random().toString(36).slice(2),
+    text:text,date:date,color:color,
+    category:CAT_LABELS[color]||CAT_LABELS[0],
+    done:false
+  });
   saveSched(list);
   document.getElementById('schedAddText').value='';
   renderSchedCalendar();
@@ -2410,6 +2461,7 @@ function openSchedPopup(dateStr,evs){
     html+='<div class="sched-popup-dot" style="background:'+color+';"></div>';
     html+='<div style="flex:1;min-width:0;">';
     html+='<div class="sched-popup-text'+(ev.done?' done':'')+'">'+esc(ev.label)+'</div>';
+    if(ev.category&&ev.custom)html+='<div style="font-size:11px;color:var(--text-dim);margin-top:2px;font-weight:600;">'+esc(ev.category)+'</div>';
     if(ev.phone)html+='<a class="sched-popup-phone" href="tel:'+esc(ev.phone)+'">📞 '+esc(ev.phone)+'</a>';
     html+='</div>';
     if(ev.custom){
@@ -2579,10 +2631,30 @@ function initEvents(){
 
 }
 
+
+/* ── 맨 위로 버튼 ── */
+(function(){
+  var scrollTopBtn = document.getElementById('scrollTopBtn');
+  if(scrollTopBtn){
+    scrollTopBtn.addEventListener('click', function(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  }
+  var fabTop = document.getElementById('fabTop');
+  if(fabTop){
+    fabTop.addEventListener('click', function(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+    window.addEventListener('scroll', function(){
+      fabTop.classList.toggle('visible', window.pageYOffset > 300);
+    }, {passive:true});
+  }
+})();
 document.addEventListener('DOMContentLoaded', function(){
   initEvents();
 });
 
 </script>
+<button class="fab-top" id="fabTop" title="맨 위로">↑</button>
 </body>
 </html>
