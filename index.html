@@ -559,10 +559,10 @@
 
     /* ── 고객명 검색 드롭다운 ── */
     .name-search-dropdown{
-      display:none;position:absolute;top:100%;left:0;right:0;z-index:50;
+      display:none;position:fixed;z-index:9999;
       background:#fff;border:1.5px solid var(--blue);border-radius:10px;
-      margin-top:4px;max-height:220px;overflow-y:auto;
-      box-shadow:0 6px 20px rgba(0,0,0,.15);
+      max-height:240px;overflow-y:auto;
+      box-shadow:0 8px 28px rgba(0,0,0,.22);
     }
     .name-search-dropdown.show{display:block;}
     .name-search-item{
@@ -2942,6 +2942,13 @@ function bindMemoEvents(prefix){
 ══════════════════════════════════════ */
 var nameSearchTimer = null;
 
+function positionNameDropdown(el, dropdown){
+  var rect = el.getBoundingClientRect();
+  dropdown.style.left = rect.left + 'px';
+  dropdown.style.top = (rect.bottom + 4) + 'px';
+  dropdown.style.width = rect.width + 'px';
+}
+
 function onUNameInput(el){
   clearTimeout(nameSearchTimer);
   var dropdown = document.getElementById('nameSearchDropdown');
@@ -2949,6 +2956,7 @@ function onUNameInput(el){
 
   /* 검색어가 비면 드롭다운 숨김 */
   if(!q){ dropdown.classList.remove('show'); dropdown.innerHTML=''; return; }
+  positionNameDropdown(el, dropdown);
 
   nameSearchTimer = setTimeout(function(){
     var list = load();
@@ -2963,10 +2971,12 @@ function onUNameInput(el){
       if(!aS && bS) return 1;
       return 0;
     });
+    var totalMatches = matches.length;
     matches = matches.slice(0, 8); /* 최대 8개만 표시 */
 
     if(matches.length === 0){
       dropdown.innerHTML = '<div class="name-search-empty">일치하는 고객이 없습니다</div>';
+      positionNameDropdown(el, dropdown);
       dropdown.classList.add('show');
       return;
     }
@@ -2974,12 +2984,17 @@ function onUNameInput(el){
     var html = '';
     matches.forEach(function(c, idx){
       var model = (c.modelName||'')+(c.detailModel?' · '+c.detailModel:'');
+      var st = c.status||'';
       html += '<div class="name-search-item" data-name-idx="'+idx+'">'+
-                '<div class="nsi-name">'+esc(c.customerName)+'</div>'+
-                '<div class="nsi-meta">'+esc(c.phone||'')+(model?' | '+esc(model):'')+'</div>'+
+                '<div class="nsi-name">'+esc(c.customerName)+(st?' <span class="badge '+sc(st)+'" style="font-size:9px;padding:1px 6px;margin-left:4px;">'+esc(st)+'</span>':'')+'</div>'+
+                '<div class="nsi-meta">📞 '+esc(c.phone||'-')+(model?' · 🚗 '+esc(model):'')+(c.region?' · 📍'+esc(c.region):'')+'</div>'+
               '</div>';
     });
+    if(totalMatches > 8){
+      html += '<div class="name-search-empty" style="border-top:1px solid var(--border);">외 '+(totalMatches-8)+'명 더 있습니다. 검색어를 좀 더 입력해주세요.</div>';
+    }
     dropdown.innerHTML = html;
+    positionNameDropdown(el, dropdown);
     dropdown.classList.add('show');
 
     /* 클릭 시 해당 고객 선택 */
@@ -3016,6 +3031,14 @@ document.addEventListener('click', function(e){
     dropdown.classList.remove('show');
   }
 });
+
+window.addEventListener('scroll', function(){
+  var dropdown = document.getElementById('nameSearchDropdown');
+  var nameInput = document.getElementById('u-name');
+  if(dropdown && dropdown.classList.contains('show') && nameInput){
+    positionNameDropdown(nameInput, dropdown);
+  }
+}, {passive:true});
 
 document.addEventListener('DOMContentLoaded', function(){
   try{ initEvents(); } catch(e){ console.error('[initEvents 오류]', e); }
