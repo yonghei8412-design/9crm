@@ -469,6 +469,7 @@
     .ev-custom-7{background:#fff8e0;color:#8a6000;border-left:3px solid #e8a020;box-shadow:inset 2px 0 0 #e8a020;}   /* 중요 - 골드 */
     .ev-custom-8{background:#fff0f5;color:#8a0040;border-left:3px solid #cc2266;}   /* 고객 AS - 핑크 */
     .ev-custom-9{background:#f0f5ff;color:#2a3a8a;border-left:3px solid #4455bb;}   /* 회의 - 남색 */
+    .ev-custom-10{background:#f5f5f5;color:#555555;border-left:3px solid #888888;}  /* 기타 - 회색 */
     .ev-done{opacity:.42;text-decoration:line-through;}
     .cal-event .del-btn{display:none;position:absolute;right:3px;top:50%;transform:translateY(-50%);font-size:9px;color:rgba(0,0,0,.45);cursor:pointer;font-weight:900;background:rgba(255,255,255,.8);border-radius:50%;width:13px;height:13px;align-items:center;justify-content:center;line-height:1;}
     .cal-event{position:relative;}
@@ -555,6 +556,24 @@
     }
     .memo-preview.show{display:block;}
     .memo-preview strong{color:var(--gold-dk);}
+
+    /* ── 고객명 검색 드롭다운 ── */
+    .name-search-dropdown{
+      display:none;position:absolute;top:100%;left:0;right:0;z-index:50;
+      background:#fff;border:1.5px solid var(--blue);border-radius:10px;
+      margin-top:4px;max-height:220px;overflow-y:auto;
+      box-shadow:0 6px 20px rgba(0,0,0,.15);
+    }
+    .name-search-dropdown.show{display:block;}
+    .name-search-item{
+      padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);
+      transition:background .12s;
+    }
+    .name-search-item:last-child{border-bottom:none;}
+    .name-search-item:hover{background:#edf5fc;}
+    .name-search-item .nsi-name{font-size:14px;font-weight:700;color:var(--black);}
+    .name-search-item .nsi-meta{font-size:11px;color:var(--text-dim);margin-top:2px;}
+    .name-search-empty{padding:14px;text-align:center;color:var(--text-lt);font-size:12px;}
   </style>
 </head>
 <body>
@@ -674,6 +693,7 @@
         <option value="7">⭐ 중요</option>
         <option value="8">🔧 고객 AS</option>
         <option value="9">👥 회의</option>
+        <option value="10">📌 기타</option>
       </select>
       <button class="add-btn" id="schedAddBtn">+ 추가</button>
     </div>
@@ -697,6 +717,7 @@
       <div class="legend-item"><div class="legend-dot" style="background:#e8a020;"></div>⭐ 중요</div>
       <div class="legend-item"><div class="legend-dot" style="background:#cc2266;"></div>🔧 고객 AS</div>
       <div class="legend-item"><div class="legend-dot" style="background:#4455bb;"></div>👥 회의</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#888888;"></div>📌 기타</div>
     </div>
     <!-- 달력 -->
     <div class="cal-grid">
@@ -893,9 +914,13 @@
   <div class="view" id="consultView">
     <div class="view-header"><div class="view-title">📋 기존고객 추가상담</div><div class="view-sub">상담내용이 자동 누적됩니다</div></div>
     <div class="form-card">
-      <div class="form-card-header blue">고객 확인 (연락처로 검색)</div>
+      <div class="form-card-header blue">고객 확인 (고객명 또는 연락처로 검색)</div>
       <div class="form-body"><div class="grid-2">
-        <div class="field"><label>고객명</label><input type="text" id="u-name" placeholder="홍길동"/></div>
+        <div class="field" style="position:relative;">
+          <label>고객명</label>
+          <input type="text" id="u-name" placeholder="홍길동 (입력 시 자동 검색)" autocomplete="off"/>
+          <div class="name-search-dropdown" id="nameSearchDropdown"></div>
+        </div>
         <div class="field"><label>연락처 <span class="req">*</span></label><input type="tel" id="u-phone" placeholder="010-0000-0000" maxlength="13"/></div>
       </div>
       <div class="preview-box" id="preview-box">
@@ -955,7 +980,7 @@
       <div class="list-count-badge" id="list-count">0명</div>
     </div>
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="🔍 이름 또는 연락처 검색"/>
+      <input type="text" id="searchInput" placeholder="🔍 고객명으로 검색 (연락처도 검색 가능)"/>
     </div>
     <div class="backup-bar">
       <button class="backup-btn" id="exportBtn">📤 데이터 내보내기</button>
@@ -1029,7 +1054,7 @@
   <div class="edit-modal" id="editModal">
     <div class="edit-modal-header">
       <div class="edit-modal-title">✏️ 고객 정보 수정</div>
-      <button class="edit-modal-close" class="js-close-edit">✕</button>
+      <button class="edit-modal-close js-close-edit">✕</button>
     </div>
     <div class="edit-modal-body">
       <div class="form-card">
@@ -1159,7 +1184,7 @@
     </div>
     <div class="st-msg edit-save-msg" id="edit-save-msg"></div>
     <div class="edit-modal-footer">
-      <button class="btn-edit-cancel" class="close-edit-btn2">취소</button>
+      <button class="btn-edit-cancel close-edit-btn2">취소</button>
       <button class="btn-edit-save" id="submitEditBtn">✅ 수정 저장</button>
     </div>
   </div>
@@ -1677,11 +1702,22 @@ function renderList(){
       else if(currentCareFilter==="delivery3yr"){var del3=parseD(c.deliveryDate);if(!del3||Math.round((now-del3)/86400000)<1095)return false;}
     }
     if(currentDeliveryYear){var dyYear=String(c.deliveryDate||c.deliveryMonth||"").trim().substring(0,4);if(dyYear!==currentDeliveryYear)return false;}
-    if(q){var nm=(c.customerName||"").toLowerCase();var ph=normP(c.phone);if(nm.indexOf(q)<0&&ph.indexOf(q.replace(/\D/g,""))<0)return false;}
+    if(q){var nm=(c.customerName||"").toLowerCase();var ph=normP(c.phone);var qDigits=q.replace(/\D/g,"");var nameMatch=nm.indexOf(q)>=0;var phoneMatch=qDigits&&ph.indexOf(qDigits)>=0;if(!nameMatch&&!phoneMatch)return false;}
     return true;
   });
 
   filtered.sort(function(a,b){
+    if(q){
+      var aName=(a.customerName||"").toLowerCase().indexOf(q)>=0;
+      var bName=(b.customerName||"").toLowerCase().indexOf(q)>=0;
+      if(aName&&!bName)return -1;
+      if(!aName&&bName)return 1;
+      /* 이름 매칭 여부가 같으면 이름이 검색어로 시작하는 것을 우선 */
+      var aStarts=(a.customerName||"").toLowerCase().indexOf(q)===0;
+      var bStarts=(b.customerName||"").toLowerCase().indexOf(q)===0;
+      if(aStarts&&!bStarts)return -1;
+      if(!aStarts&&bStarts)return 1;
+    }
     var ta=a._updatedAt||a._savedAt||"";var tb=b._updatedAt||b._savedAt||"";
     return tb.localeCompare(ta);
   });
@@ -1992,7 +2028,7 @@ function closeEdit(){
 function editOverlayClick(e){if(e.target===document.getElementById("editOverlay"))closeEdit();}
 function submitEdit(){
   var msgEl=document.getElementById("edit-save-msg");
-  var btn=document.getElementById("editSaveBtn");
+  var btn=document.getElementById("submitEditBtn");
   if(msgEl){msgEl.className="st-msg edit-save-msg";msgEl.textContent="";}
   var eName=document.getElementById("e-customerName").value.trim();
   var ePhone=document.getElementById("e-phone").value.trim();
@@ -2518,7 +2554,7 @@ function renderSchedCalendar(){
 }
 
 /* 일정 추가 */
-var CAT_LABELS=['📞 고객연락','🤝 상담/미팅','📝 계약업무','🚗 출고준비','💼 사무처리','🏢 전시장업무','📊 보고/정산','⭐ 중요','🔧 고객 AS','👥 회의'];
+var CAT_LABELS=['📞 고객연락','🤝 상담/미팅','📝 계약업무','🚗 출고준비','💼 사무처리','🏢 전시장업무','📊 보고/정산','⭐ 중요','🔧 고객 AS','👥 회의','📌 기타'];
 function schedAddTask(){
   var text=document.getElementById('schedAddText').value.trim();
   var date=document.getElementById('schedAddDate').value;
@@ -2627,9 +2663,7 @@ function initEvents(){
     el.addEventListener('click', function(){ schedMove(parseInt(el.getAttribute('data-schedmove'))); });
   });
 
-  /* ── 오늘로 버튼 ── */
-  var calTodayBtn = document.getElementById('calTodayBtn');
-  if(calTodayBtn) calTodayBtn.addEventListener('click', goToday);
+  /* ── 오늘로 버튼 (스케줄) ── */
   var schedTodayBtn = document.getElementById('schedTodayBtn');
   if(schedTodayBtn) schedTodayBtn.addEventListener('click', schedGoToday);
 
@@ -2701,6 +2735,8 @@ function initEvents(){
   if(phoneInput) phoneInput.addEventListener('input', function(){ fmtP(this); });
   var uPhoneInput = document.getElementById('u-phone');
   if(uPhoneInput) uPhoneInput.addEventListener('input', function(){ onUPhoneInput(this); });
+  var uNameInput = document.getElementById('u-name');
+  if(uNameInput) uNameInput.addEventListener('input', function(){ onUNameInput(this); });
 
   /* ── 마일리지 입력 ── */
   ['lastServiceMileage','currentMileage','e-lastServiceMileage','e-currentMileage','u-mileage'].forEach(function(id){
@@ -2899,6 +2935,87 @@ function bindMemoEvents(prefix){
   var inp = document.getElementById(prefix+'contactMemo');
   if(inp) inp.addEventListener('input', function(){ updateMemoPreview(prefix); });
 }
+
+
+/* ══════════════════════════════════════
+   추가상담 - 고객명 검색 (자동완성)
+══════════════════════════════════════ */
+var nameSearchTimer = null;
+
+function onUNameInput(el){
+  clearTimeout(nameSearchTimer);
+  var dropdown = document.getElementById('nameSearchDropdown');
+  var q = el.value.trim();
+
+  /* 검색어가 비면 드롭다운 숨김 */
+  if(!q){ dropdown.classList.remove('show'); dropdown.innerHTML=''; return; }
+
+  nameSearchTimer = setTimeout(function(){
+    var list = load();
+    var matches = list.filter(function(c){
+      return (c.customerName||'').toLowerCase().indexOf(q.toLowerCase()) >= 0;
+    });
+    /* 이름이 검색어로 시작하는 것을 우선 정렬 */
+    matches.sort(function(a,b){
+      var aS = (a.customerName||'').toLowerCase().indexOf(q.toLowerCase())===0;
+      var bS = (b.customerName||'').toLowerCase().indexOf(q.toLowerCase())===0;
+      if(aS && !bS) return -1;
+      if(!aS && bS) return 1;
+      return 0;
+    });
+    matches = matches.slice(0, 8); /* 최대 8개만 표시 */
+
+    if(matches.length === 0){
+      dropdown.innerHTML = '<div class="name-search-empty">일치하는 고객이 없습니다</div>';
+      dropdown.classList.add('show');
+      return;
+    }
+
+    var html = '';
+    matches.forEach(function(c, idx){
+      var model = (c.modelName||'')+(c.detailModel?' · '+c.detailModel:'');
+      html += '<div class="name-search-item" data-name-idx="'+idx+'">'+
+                '<div class="nsi-name">'+esc(c.customerName)+'</div>'+
+                '<div class="nsi-meta">'+esc(c.phone||'')+(model?' | '+esc(model):'')+'</div>'+
+              '</div>';
+    });
+    dropdown.innerHTML = html;
+    dropdown.classList.add('show');
+
+    /* 클릭 시 해당 고객 선택 */
+    dropdown.querySelectorAll('.name-search-item').forEach(function(item, idx){
+      item.addEventListener('click', function(){
+        selectCustomerForConsult(matches[idx]);
+      });
+    });
+  }, 250);
+}
+
+/* 검색 결과에서 고객 선택 시 폼 채우기 */
+function selectCustomerForConsult(c){
+  document.getElementById('u-name').value = c.customerName || '';
+  document.getElementById('u-phone').value = c.phone || '';
+  document.getElementById('nameSearchDropdown').classList.remove('show');
+
+  /* 프리뷰 박스 표시 */
+  var pb = document.getElementById('preview-box');
+  var nf = document.getElementById('nofound');
+  nf.classList.remove('show');
+  var sd = c.status || '—';
+  document.getElementById('prev-name').textContent = c.customerName || '—';
+  document.getElementById('prev-meta').textContent = (c.modelName?c.modelName+(c.detailModel?' · '+c.detailModel:''):'모델미정')+' | '+(c.leadSource||'—');
+  document.getElementById('prev-status').innerHTML = '<span class="badge '+sc(c.status)+'">'+esc(sd)+'</span>';
+  pb.classList.add('show');
+}
+
+/* 드롭다운 외부 클릭 시 닫기 */
+document.addEventListener('click', function(e){
+  var dropdown = document.getElementById('nameSearchDropdown');
+  var nameInput = document.getElementById('u-name');
+  if(dropdown && nameInput && !dropdown.contains(e.target) && e.target !== nameInput){
+    dropdown.classList.remove('show');
+  }
+});
 
 document.addEventListener('DOMContentLoaded', function(){
   try{ initEvents(); } catch(e){ console.error('[initEvents 오류]', e); }
