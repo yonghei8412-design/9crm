@@ -693,6 +693,20 @@
       text-align:center;padding:14px;color:var(--text-lt);font-size:12px;
     }
     @media(max-width:640px){.vehicle-fields{grid-template-columns:1fr;}}
+
+    /* ── 토글 가능한 카드 헤더 ── */
+    .toggle-card-header{
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .card-toggle-btn{
+      padding:5px 14px;border-radius:20px;border:1.5px solid var(--purple);
+      background:#fff;color:var(--purple);font-family:var(--font);
+      font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;
+      white-space:nowrap;
+    }
+    .card-toggle-btn:hover{background:var(--purple);color:#fff;}
+    .card-toggle-btn.opened{background:var(--purple);color:#fff;}
+    .care-toggle-body{animation:vIn .2s ease;}
   </style>
 </head>
 <body>
@@ -999,8 +1013,11 @@
       </div>
     </div>
     <div class="form-card">
-      <div class="form-card-header care">🚗 차량관리 / 금융관리</div>
-      <div class="form-body"><div class="grid-2">
+      <div class="form-card-header care toggle-card-header" id="careToggleHeader">
+        <span>🚗 차량관리 / 금융관리</span>
+        <button type="button" class="card-toggle-btn" id="careToggleBtn">+ 추가</button>
+      </div>
+      <div class="form-body care-toggle-body" id="careToggleBody" style="display:none;"><div class="grid-2">
         <div class="field"><label>보험가입일</label><input type="date" id="insuranceStartDate" class="care-input"/></div>
         <div class="field"><label>보험만기일</label><input type="date" id="insuranceExpireDate" class="care-input"/></div>
         <div class="field"><label>자동차검사일</label><input type="date" id="inspectionDueDate" class="care-input"/></div>
@@ -1009,8 +1026,11 @@
       </div></div>
     </div>
     <div class="form-card">
-      <div class="form-card-header care">🔧 벤츠 정기점검 관리</div>
-      <div class="form-body"><div class="grid-2">
+      <div class="form-card-header care toggle-card-header" id="serviceToggleHeader">
+        <span>🔧 벤츠 정기점검 관리</span>
+        <button type="button" class="card-toggle-btn" id="serviceToggleBtn">+ 추가</button>
+      </div>
+      <div class="form-body care-toggle-body" id="serviceToggleBody" style="display:none;"><div class="grid-2">
         <div class="field"><label>최근 서비스점검일</label><input type="date" id="lastServiceDate" class="care-input"/></div>
         <div class="field"><label>최근 점검 주행거리</label><input type="text" id="lastServiceMileage" class="care-input" placeholder="예: 15000"/></div>
         <div class="field"><label>현재 주행거리 확인일</label><input type="date" id="currentMileageDate" class="care-input"/></div>
@@ -1025,6 +1045,14 @@
         <div class="field"><label>계약일</label><input type="date" id="contractDate"/></div>
         <div class="field"><label>출고일</label><input type="date" id="deliveryDate"/></div>
         <div class="field"><label>출고월 <span style="font-size:10px;color:var(--text-lt);">(자동)</span></label><input type="text" id="deliveryMonth" class="auto-field" readonly/></div>
+        <div class="field"><label>차량번호</label><input type="text" id="plateNum" placeholder="예: 12가 3456"/></div>
+        <div class="field"><label>금융방법</label>
+          <select id="financeMethod">
+            <option value="">— 선택 —</option>
+            <option>일시불</option><option>할부</option><option>리스</option>
+            <option>장기렌트</option><option>법인할부</option><option>법인리스</option><option>미정</option>
+          </select>
+        </div>
       </div></div>
     </div>
     <div class="form-card">
@@ -1326,6 +1354,14 @@
           <div class="field"><label>계약일</label><input type="date" id="e-contractDate"/></div>
           <div class="field"><label>출고일</label><input type="date" id="e-deliveryDate"/></div>
           <div class="field"><label>출고월 <span style="font-size:10px;color:var(--text-lt);">(자동)</span></label><input type="text" id="e-deliveryMonth" class="auto-field" readonly/></div>
+          <div class="field"><label>차량번호</label><input type="text" id="e-plateNum" placeholder="예: 12가 3456"/></div>
+          <div class="field"><label>금융방법</label>
+            <select id="e-financeMethod">
+              <option value="">— 선택 —</option>
+              <option>일시불</option><option>할부</option><option>리스</option>
+              <option>장기렌트</option><option>법인할부</option><option>법인리스</option><option>미정</option>
+            </select>
+          </div>
         </div></div>
       </div>
       <div class="form-card">
@@ -1961,13 +1997,25 @@ function buildCard(c,idx){
       c.ownedVehicles.forEach(function(v,vi){
         var vLabel=(v.model||'')+(v.detail?' · '+v.detail:'')||'(모델 미입력)';
         html+='<div style="background:#faf5ff;border:1px solid #e0c8f5;border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:12px;">';
-        html+='<div style="font-weight:700;color:var(--purple);margin-bottom:3px;">#'+ (vi+1) +' '+esc(vLabel)+'</div>';
+        html+='<div style="font-weight:700;color:var(--purple);margin-bottom:3px;">#'+ (vi+1) +' '+esc(vLabel)+(v.purchaseMethod?' · '+esc(v.purchaseMethod):'')+'</div>';
+
         var vDetails=[];
         if(v.plateNum)vDetails.push('🚘 '+esc(v.plateNum));
+        if(v.contractDate)vDetails.push('📝 계약:'+esc(v.contractDate));
         if(v.deliveryDate)vDetails.push('📅 출고:'+esc(v.deliveryDate));
-        if(v.insuranceExpireDate)vDetails.push('🛡 보험만기:'+esc(v.insuranceExpireDate));
-        if(v.inspectionDueDate)vDetails.push('🔧 검사:'+esc(v.inspectionDueDate));
-        if(vDetails.length)html+='<div style="color:var(--text-dim);font-size:11px;">'+vDetails.join(' · ')+'</div>';
+        if(vDetails.length)html+='<div style="color:var(--text-dim);font-size:11px;margin-bottom:2px;">'+vDetails.join(' · ')+'</div>';
+
+        var vCare=[];
+        if(v.insuranceExpireDate){var vid=dFrom(v.insuranceExpireDate);vCare.push('🛡 보험만기:'+esc(v.insuranceExpireDate)+ddTag(vid,30));}
+        if(v.inspectionDueDate){var vind=dFrom(v.inspectionDueDate);vCare.push('🔧 검사:'+esc(v.inspectionDueDate)+ddTag(vind,30));}
+        if(v.financeEndDate){var vfd=dFrom(v.financeEndDate);vCare.push('💳 금융종료:'+esc(v.financeEndDate)+ddTag(vfd,90));}
+        if(vCare.length)html+='<div style="color:var(--text-dim);font-size:11px;margin-bottom:2px;">'+vCare.join(' · ')+'</div>';
+
+        var vService=[];
+        if(v.nextServiceDate){var vsd=dFrom(v.nextServiceDate);vService.push('🔧 다음점검:'+esc(v.nextServiceDate)+ddTag(vsd,30));}
+        if(v.currentMileage)vService.push('📍 주행:'+esc(v.currentMileage));
+        if(vService.length)html+='<div style="color:var(--text-dim);font-size:11px;margin-bottom:2px;">'+vService.join(' · ')+'</div>';
+
         if(v.memo)html+='<div style="color:var(--text-lt);font-size:11px;margin-top:2px;">📝 '+esc(v.memo)+'</div>';
         html+='</div>';
       });
@@ -2082,6 +2130,8 @@ function submitNew(){
     newModelInterest:document.getElementById("newModelInterest").checked,
     newModelInterestText:document.getElementById("newModelInterestText").value.trim(),
     ownedVehicles:getVehiclesForSave(''),
+    plateNum:document.getElementById("plateNum").value.trim(),
+    financeMethod:document.getElementById("financeMethod").value,
     lastServiceDate:document.getElementById("lastServiceDate").value,
     lastServiceMileage:document.getElementById("lastServiceMileage").value,
     currentMileageDate:document.getElementById("currentMileageDate").value,
@@ -2128,6 +2178,10 @@ function resetNewForm(){
   if(nmWrap)nmWrap.classList.remove("show");
   if(nmText)nmText.value="";
   resetVehicles('');
+  var pn=document.getElementById("plateNum"); if(pn)pn.value="";
+  var fm=document.getElementById("financeMethod"); if(fm)fm.selectedIndex=0;
+  closeToggleCard('careToggleBtn','careToggleBody');
+  closeToggleCard('serviceToggleBtn','serviceToggleBody');
 }
 
 // ── 추가상담 저장 ────────────────────────────────────────────
@@ -2195,6 +2249,8 @@ function openEditByIdx(idx){
   if(eNmChk){eNmChk.checked=!!c.newModelInterest;if(eNmWrap)eNmWrap.classList.toggle("show",!!c.newModelInterest);}
   if(eNmText)eNmText.value=c.newModelInterestText||"";
   loadVehiclesToForm('e-', c.ownedVehicles||[]);
+  sv("e-plateNum", c.plateNum);
+  sv("e-financeMethod", c.financeMethod);
   sv("e-lastServiceDate",c.lastServiceDate);sv("e-lastServiceMileage",c.lastServiceMileage);
   sv("e-currentMileageDate",c.currentMileageDate);sv("e-currentMileage",c.currentMileage);
   sv("e-nextServiceDate",c.nextServiceDate);sv("e-nextServiceMileage",c.nextServiceMileage);
@@ -2270,6 +2326,8 @@ function submitEdit(){
     newModelInterest:document.getElementById("e-newModelInterest").checked,
     newModelInterestText:document.getElementById("e-newModelInterestText").value.trim(),
     ownedVehicles:getVehiclesForSave('e-'),
+    plateNum:document.getElementById("e-plateNum").value.trim(),
+    financeMethod:document.getElementById("e-financeMethod").value,
     lastServiceDate:document.getElementById("e-lastServiceDate").value,
     lastServiceMileage:document.getElementById("e-lastServiceMileage").value,
     currentMileageDate:document.getElementById("e-currentMileageDate").value,
@@ -2977,6 +3035,12 @@ function initEvents(){
   try{ bindNewModelToggle(''); }catch(e){}
   try{ bindNewModelToggle('e-'); }catch(e){}
 
+  /* ── 차량관리/정기점검 카드 토글 ── */
+  try{
+    bindCardToggle('careToggleBtn', 'careToggleBody');
+    bindCardToggle('serviceToggleBtn', 'serviceToggleBody');
+  }catch(e){}
+
   /* ── 보유 차량 목록 ── */
   try{
     var addVehicleBtn = document.getElementById('addVehicleBtn');
@@ -3328,7 +3392,7 @@ function renderNewModelGroups(){
   /* 모델명별로 그룹화 (관심모델 텍스트가 있으면 그걸로, 없으면 기존 모델명) */
   var groups = {};
   interested.forEach(function(c){
-    var key = (c.newModelInterestText && c.newModelInterestText.trim()) || c.modelName || '기타';
+    var key = c.modelName || (c.newModelInterestText && c.newModelInterestText.trim()) || '모델 미지정';
     if(!groups[key]) groups[key] = [];
     groups[key].push(c);
   });
@@ -3434,27 +3498,52 @@ function renderPromoList(){
     return;
   }
 
-  var html = '<div class="newmodel-group-panel">';
-  html += '<div class="newmodel-group-header" style="background:linear-gradient(135deg,#e3f7ec,#c5ecd5);border-color:#5fc890;color:#0a5528;cursor:default;">';
-  html += '<span>💰 프로모션 알림 받고 싶은 고객</span>';
-  html += '<span class="newmodel-group-count" style="background:#0f6e35;">'+promoCustomers.length+'명</span>';
-  html += '</div>';
-  html += '<div style="background:#fff;border:1px solid #5fc890;border-top:none;border-radius:0 0 10px 10px;padding:4px;">';
-
+  /* 모델명별로 그룹화 */
+  var groups = {};
   promoCustomers.forEach(function(c){
-    var sd = c.status || '—';
-    var model = (c.modelName||'')+(c.detailModel?' · '+c.detailModel:'');
-    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border);">';
-    html += '<div>';
-    html += '<div style="font-size:14px;font-weight:700;color:var(--black);">'+esc(c.customerName)+' <span class="badge '+sc(c.status)+'" style="font-size:10px;">'+esc(sd)+'</span></div>';
-    html += '<div style="font-size:11px;color:var(--text-dim);margin-top:2px;">📞 '+esc(c.phone||'-')+(model?' · 🚗 '+esc(model):'')+(c.region?' · 📍'+esc(c.region):'')+'</div>';
+    var key = c.modelName || '모델 미지정';
+    if(!groups[key]) groups[key] = [];
+    groups[key].push(c);
+  });
+  var groupKeys = Object.keys(groups).sort(function(a,b){ return groups[b].length - groups[a].length; });
+
+  var html = '<div style="margin-bottom:10px;font-size:12px;color:var(--text-dim);font-weight:600;">총 '+promoCustomers.length+'명의 프로모션 알림 고객</div>';
+
+  groupKeys.forEach(function(key, gIdx){
+    var customers = groups[key];
+    var panelId = 'promogroup-'+gIdx;
+    html += '<div class="newmodel-group-panel">';
+    html += '<div class="newmodel-group-header" data-promotog="'+panelId+'" style="background:linear-gradient(135deg,#e3f7ec,#c5ecd5);border-color:#5fc890;color:#0a5528;">';
+    html += '<span>🚗 '+esc(key)+'</span>';
+    html += '<span class="newmodel-group-count" style="background:#0f6e35;">'+customers.length+'명</span>';
     html += '</div>';
-    if(c.phone) html += '<a href="tel:'+esc(c.phone)+'" style="padding:6px 14px;background:#0f6e35;color:#fff;border-radius:20px;text-decoration:none;font-size:12px;font-weight:700;white-space:nowrap;">📞 전화</a>';
-    html += '</div>';
+    html += '<div id="'+panelId+'" style="display:none;background:#fff;border:1px solid #5fc890;border-top:none;border-radius:0 0 10px 10px;padding:4px;">';
+    customers.forEach(function(c){
+      var sd = c.status || '—';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border);">';
+      html += '<div>';
+      html += '<div style="font-size:14px;font-weight:700;color:var(--black);">'+esc(c.customerName)+' <span class="badge '+sc(c.status)+'" style="font-size:10px;">'+esc(sd)+'</span></div>';
+      html += '<div style="font-size:11px;color:var(--text-dim);margin-top:2px;">📞 '+esc(c.phone||'-')+(c.region?' · 📍'+esc(c.region):'')+'</div>';
+      html += '</div>';
+      if(c.phone) html += '<a href="tel:'+esc(c.phone)+'" style="padding:6px 14px;background:#0f6e35;color:#fff;border-radius:20px;text-decoration:none;font-size:12px;font-weight:700;white-space:nowrap;">📞 전화</a>';
+      html += '</div>';
+    });
+    html += '</div></div>';
   });
 
-  html += '</div></div>';
   panel.innerHTML = html;
+
+  /* 그룹 펼치기/접기 */
+  panel.querySelectorAll('[data-promotog]').forEach(function(header){
+    header.addEventListener('click', function(){
+      var targetId = header.getAttribute('data-promotog');
+      var target = document.getElementById(targetId);
+      if(target){
+        var isOpen = target.style.display === 'block';
+        target.style.display = isOpen ? 'none' : 'block';
+      }
+    });
+  });
 }
 
 
@@ -3476,21 +3565,55 @@ function buildVehicleItemHtml(prefix, vId, v){
   VEHICLE_MODEL_OPTIONS.forEach(function(m){
     modelOpts += '<option value="'+esc(m)+'"'+(v.model===m?' selected':'')+'>'+esc(m)+'</option>';
   });
+  var pmOpts = '<option value="">— 선택 —</option>';
+  ['일시불','할부','리스','장기렌트','법인할부','법인리스','미정'].forEach(function(p){
+    pmOpts += '<option value="'+esc(p)+'"'+(v.purchaseMethod===p?' selected':'')+'>'+esc(p)+'</option>';
+  });
   return ''+
     '<div class="vehicle-item" data-vid="'+vId+'">'+
       '<div class="vehicle-item-header">'+
         '<span class="vehicle-item-num">차량 #'+(vId+1)+'</span>'+
         '<button type="button" class="vehicle-remove-btn" data-vehicle-remove="'+vId+'" data-vehicle-prefix="'+prefix+'">✕</button>'+
       '</div>'+
+
+      '<div class="d-sec" style="margin-top:0;">모델 정보</div>'+
       '<div class="vehicle-fields">'+
         '<div><label>모델</label><select data-vfield="model" data-vid="'+vId+'">'+modelOpts+'</select></div>'+
         '<div><label>세부모델</label><input type="text" data-vfield="detail" data-vid="'+vId+'" value="'+esc(v.detail||'')+'" placeholder="예: E 250 AVANTGARDE"/></div>'+
+      '</div>'+
+
+      '<div class="d-sec">계약 / 출고 정보</div>'+
+      '<div class="vehicle-fields">'+
+        '<div><label>계약일</label><input type="date" data-vfield="contractDate" data-vid="'+vId+'" value="'+esc(v.contractDate||'')+'"/></div>'+
         '<div><label>출고일</label><input type="date" data-vfield="deliveryDate" data-vid="'+vId+'" value="'+esc(v.deliveryDate||'')+'"/></div>'+
         '<div><label>차량번호</label><input type="text" data-vfield="plateNum" data-vid="'+vId+'" value="'+esc(v.plateNum||'')+'" placeholder="예: 12가 3456"/></div>'+
+        '<div><label>구매방법</label><select data-vfield="purchaseMethod" data-vid="'+vId+'">'+pmOpts+'</select></div>'+
+      '</div>'+
+
+      '<div class="d-sec care">차량관리 / 금융관리</div>'+
+      '<div class="vehicle-fields">'+
+        '<div><label>보험가입일</label><input type="date" data-vfield="insuranceStartDate" data-vid="'+vId+'" value="'+esc(v.insuranceStartDate||'')+'"/></div>'+
         '<div><label>보험만기일</label><input type="date" data-vfield="insuranceExpireDate" data-vid="'+vId+'" value="'+esc(v.insuranceExpireDate||'')+'"/></div>'+
         '<div><label>자동차검사일</label><input type="date" data-vfield="inspectionDueDate" data-vid="'+vId+'" value="'+esc(v.inspectionDueDate||'')+'"/></div>'+
+        '<div><label>금융시작일</label><input type="date" data-vfield="financeStartDate" data-vid="'+vId+'" value="'+esc(v.financeStartDate||'')+'"/></div>'+
+        '<div><label>금융종료일</label><input type="date" data-vfield="financeEndDate" data-vid="'+vId+'" value="'+esc(v.financeEndDate||'')+'"/></div>'+
+      '</div>'+
+
+      '<div class="d-sec care">🔧 벤츠 정기점검 관리</div>'+
+      '<div class="vehicle-fields">'+
+        '<div><label>최근 서비스점검일</label><input type="date" data-vfield="lastServiceDate" data-vid="'+vId+'" value="'+esc(v.lastServiceDate||'')+'"/></div>'+
+        '<div><label>최근 점검 주행거리</label><input type="text" data-vfield="lastServiceMileage" data-vid="'+vId+'" value="'+esc(v.lastServiceMileage||'')+'" placeholder="예: 15000km"/></div>'+
+        '<div><label>현재 주행거리 확인일</label><input type="date" data-vfield="currentMileageDate" data-vid="'+vId+'" value="'+esc(v.currentMileageDate||'')+'"/></div>'+
+        '<div><label>현재 주행거리</label><input type="text" data-vfield="currentMileage" data-vid="'+vId+'" value="'+esc(v.currentMileage||'')+'" placeholder="예: 14000km"/></div>'+
+        '<div><label>다음 무상점검 예정일</label><input type="date" data-vfield="nextServiceDate" data-vid="'+vId+'" value="'+esc(v.nextServiceDate||'')+'"/></div>'+
+        '<div><label>다음 무상점검 예정거리</label><input type="text" data-vfield="nextServiceMileage" data-vid="'+vId+'" value="'+esc(v.nextServiceMileage||'')+'" placeholder="자동 계산은 미지원, 직접입력"/></div>'+
+      '</div>'+
+
+      '<div class="d-sec">기타</div>'+
+      '<div class="vehicle-fields">'+
         '<div class="vf-full"><label>비고</label><input type="text" data-vfield="memo" data-vid="'+vId+'" value="'+esc(v.memo||'')+'" placeholder="예: 법인 대표 차량, 자녀용 등"/></div>'+
       '</div>'+
+
     '</div>';
 }
 
@@ -3511,7 +3634,11 @@ function renderOwnedVehicles(prefix){
 
   /* select/input 값 변경 시 메모리 데이터 동기화 */
   container.querySelectorAll('[data-vfield]').forEach(function(el){
-    el.addEventListener('input', function(){ syncVehicleField(prefix, el); });
+    el.addEventListener('input', function(){
+      var field = el.getAttribute('data-vfield');
+      if(field==='lastServiceMileage' || field==='currentMileage'){ fmtMileage(el); }
+      syncVehicleField(prefix, el);
+    });
     el.addEventListener('change', function(){ syncVehicleField(prefix, el); });
   });
 }
@@ -3548,7 +3675,18 @@ function removeVehicleRow(prefix, vid){
 /* 차량 목록을 JSON으로 변환 (저장용) */
 function getVehiclesForSave(prefix){
   return (ownedVehicles[prefix]||[]).map(function(v){
-    return { model:v.model||'', detail:v.detail||'', deliveryDate:v.deliveryDate||'', plateNum:v.plateNum||'', insuranceExpireDate:v.insuranceExpireDate||'', inspectionDueDate:v.inspectionDueDate||'', memo:v.memo||'' };
+    return {
+      model:v.model||'', detail:v.detail||'',
+      contractDate:v.contractDate||'', deliveryDate:v.deliveryDate||'',
+      plateNum:v.plateNum||'', purchaseMethod:v.purchaseMethod||'',
+      insuranceStartDate:v.insuranceStartDate||'', insuranceExpireDate:v.insuranceExpireDate||'',
+      inspectionDueDate:v.inspectionDueDate||'',
+      financeStartDate:v.financeStartDate||'', financeEndDate:v.financeEndDate||'',
+      lastServiceDate:v.lastServiceDate||'', lastServiceMileage:v.lastServiceMileage||'',
+      currentMileageDate:v.currentMileageDate||'', currentMileage:v.currentMileage||'',
+      nextServiceDate:v.nextServiceDate||'', nextServiceMileage:v.nextServiceMileage||'',
+      memo:v.memo||''
+    };
   });
 }
 
@@ -3564,6 +3702,30 @@ function loadVehiclesToForm(prefix, savedVehicles){
 function resetVehicles(prefix){
   ownedVehicles[prefix] = [];
   renderOwnedVehicles(prefix);
+}
+
+
+/* ══════════════════════════════════════
+   신규등록 - 차량관리/정기점검 카드 토글
+══════════════════════════════════════ */
+function bindCardToggle(btnId, bodyId){
+  var btn = document.getElementById(btnId);
+  var body = document.getElementById(bodyId);
+  if(!btn || !body) return;
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    btn.textContent = isOpen ? '+ 추가' : '✕ 닫기';
+    btn.classList.toggle('opened', !isOpen);
+  });
+}
+
+function closeToggleCard(btnId, bodyId){
+  var btn = document.getElementById(btnId);
+  var body = document.getElementById(bodyId);
+  if(btn){ btn.textContent='+ 추가'; btn.classList.remove('opened'); }
+  if(body){ body.style.display='none'; }
 }
 
 document.addEventListener('DOMContentLoaded', function(){
