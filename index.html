@@ -736,6 +736,70 @@
       cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;
     }
     .newmodel-add-btn-inline:hover{background:#fff0d0;}
+    .newmodel-chip.extra-model-chip{
+      background:linear-gradient(135deg,#e3f0ff,#c8e0ff);
+      color:#1a4a8a;border-color:#7ab0e8;
+    }
+    .newmodel-chip.extra-model-chip .chip-remove{
+      background:rgba(26,74,138,.15);color:#1a4a8a;
+    }
+    .newmodel-chip.extra-model-chip .chip-remove:hover{background:rgba(26,74,138,.3);}
+    .chip.extra-model-card-chip{
+      background:linear-gradient(135deg,#e3f0ff,#c8e0ff);
+      color:#1a4a8a;font-weight:700;border:1px solid #7ab0e8;
+    }
+
+    /* ── 차량 관심 정보 - 반반 레이아웃 (소형화) ── */
+    .interest-model-split{
+      display:grid;grid-template-columns:1fr 1fr;gap:12px;
+    }
+    .interest-model-half{
+      background:var(--surface2);border:1px solid var(--border);
+      border-radius:10px;padding:10px;
+    }
+    .interest-model-mini-label{
+      font-size:11px;font-weight:700;color:var(--text-dim);
+      display:block;margin-bottom:6px;
+    }
+    .newmodel-chip-row.mini{
+      display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;
+      min-height:0;
+    }
+    .newmodel-chip-row.mini .newmodel-chip-empty{
+      font-size:10px;color:var(--text-lt);padding:3px 0;
+    }
+    .newmodel-chip-row.mini .newmodel-chip{
+      font-size:10px;padding:4px 5px 4px 9px;
+    }
+    .newmodel-chip-row.mini .newmodel-chip .chip-remove{
+      width:14px;height:14px;font-size:9px;
+    }
+    .mini-select{
+      width:100%;padding:7px 9px;border:1px solid var(--border2);
+      border-radius:7px;font-family:var(--font);font-size:12px;
+      background:#fff;outline:none;margin-bottom:6px;
+    }
+    .mini-select:focus{border-color:var(--gold);}
+    .newmodel-add-btn-mini{
+      width:100%;padding:6px;border:1.5px dashed #e8b860;
+      border-radius:7px;background:#fffbf0;color:#8a5a00;
+      font-family:var(--font);font-size:11px;font-weight:700;
+      cursor:pointer;transition:all .15s;
+    }
+    .newmodel-add-btn-mini:hover:not(:disabled){background:#fff0d0;}
+    .newmodel-add-btn-mini:disabled{opacity:.45;cursor:not-allowed;}
+    @media(max-width:640px){
+      .interest-model-split{grid-template-columns:1fr;}
+    }
+
+    /* ── 금융 메모 ── */
+    .finance-memo-input{
+      width:100%;padding:8px 10px;margin-top:6px;
+      border:1px solid var(--border2);border-radius:7px;
+      font-family:var(--font);font-size:12px;
+      background:#fafafa;outline:none;
+    }
+    .finance-memo-input:focus{border-color:var(--gold);background:#fff;}
   </style>
 </head>
 <body>
@@ -976,14 +1040,37 @@
           </div>
         </div>
         <div class="field full" style="margin-top:6px;">
-          <label>🆕 신차종 관심 모델 <span style="font-size:10px;color:var(--text-lt);font-weight:500;">(출시 예정 신차 등 직접 입력, 여러 개 추가 가능)</span></label>
-          <div class="newmodel-chip-row" id="newModelChipRow" style="margin-bottom:8px;"></div>
-          <div style="display:flex;gap:8px;">
-            <input type="text" id="newModelTextInput" placeholder="예: EQA, 신형 E클래스, 차세대 GLC 등" style="flex:1;" autocomplete="off"/>
-            <button type="button" class="newmodel-add-btn-inline" id="newModelAddBtn">+ 추가</button>
+          <div class="interest-model-split">
+            <div class="interest-model-half">
+              <label class="interest-model-mini-label">🚗 추가 관심 모델</label>
+              <div class="newmodel-chip-row mini" id="extraModelChipRow"></div>
+              <select id="extraModelSelect" class="mini-select">
+                <option value="">— 모델 선택 —</option>
+                <option>A-Class</option><option>CLA</option><option>GLA / GLB</option>
+                <option>C-Class</option><option>E-Class</option><option>S-Class</option>
+                <option>CLE</option><option>GLC</option><option>GLE</option><option>GLS</option>
+                <option>G-Class</option><option>AMG GT · SL</option><option>EQ</option>
+                <option>Mercedes-Maybach</option>
+              </select>
+              <button type="button" class="newmodel-add-btn-mini" id="extraModelAddBtn" disabled>+ 추가</button>
+              <input type="hidden" id="extraModelText" value=""/>
+            </div>
+            <div class="interest-model-half">
+              <label class="interest-model-mini-label">🆕 신차종 관심 모델</label>
+              <div class="newmodel-chip-row mini" id="newModelChipRow"></div>
+              <select id="newModelTextInput" class="mini-select">
+                <option value="">— 모델 선택 —</option>
+                <option>A-Class</option><option>CLA</option><option>GLA / GLB</option>
+                <option>C-Class</option><option>E-Class</option><option>S-Class</option>
+                <option>CLE</option><option>GLC</option><option>GLE</option><option>GLS</option>
+                <option>G-Class</option><option>AMG GT · SL</option><option>EQ</option>
+                <option>Mercedes-Maybach</option>
+              </select>
+              <button type="button" class="newmodel-add-btn-mini" id="newModelAddBtn" disabled>+ 추가</button>
+              <input type="hidden" id="newModelInterest" value=""/>
+              <input type="hidden" id="newModelInterestText" value=""/>
+            </div>
           </div>
-          <input type="hidden" id="newModelInterest" value=""/>
-          <input type="hidden" id="newModelInterestText" value=""/>
         </div>
       </div></div>
     </div>
@@ -1091,6 +1178,9 @@
             <option>일시불</option><option>할부</option><option>리스</option>
             <option>장기렌트</option><option>법인할부</option><option>법인리스</option><option>미정</option>
           </select>
+        </div>
+        <div class="field"><label>메모</label>
+          <input type="text" id="financeMemo"/>
         </div>
       </div></div>
     </div>
@@ -1292,14 +1382,37 @@
             </div>
           </div>
           <div class="field full" style="margin-top:6px;">
-            <label>🆕 신차종 관심 모델 <span style="font-size:10px;color:var(--text-lt);font-weight:500;">(출시 예정 신차 등 직접 입력, 여러 개 추가 가능)</span></label>
-            <div class="newmodel-chip-row" id="e-newModelChipRow" style="margin-bottom:8px;"></div>
-            <div style="display:flex;gap:8px;">
-              <input type="text" id="e-newModelTextInput" placeholder="예: EQA, 신형 E클래스, 차세대 GLC 등" style="flex:1;" autocomplete="off"/>
-              <button type="button" class="newmodel-add-btn-inline" id="e-newModelAddBtn">+ 추가</button>
+            <div class="interest-model-split">
+              <div class="interest-model-half">
+                <label class="interest-model-mini-label">🚗 추가 관심 모델</label>
+                <div class="newmodel-chip-row mini" id="e-extraModelChipRow"></div>
+                <select id="e-extraModelSelect" class="mini-select">
+                  <option value="">— 모델 선택 —</option>
+                  <option>A-Class</option><option>CLA</option><option>GLA / GLB</option>
+                  <option>C-Class</option><option>E-Class</option><option>S-Class</option>
+                  <option>CLE</option><option>GLC</option><option>GLE</option><option>GLS</option>
+                  <option>G-Class</option><option>AMG GT · SL</option><option>EQ</option>
+                  <option>Mercedes-Maybach</option>
+                </select>
+                <button type="button" class="newmodel-add-btn-mini" id="e-extraModelAddBtn" disabled>+ 추가</button>
+                <input type="hidden" id="e-extraModelText" value=""/>
+              </div>
+              <div class="interest-model-half">
+                <label class="interest-model-mini-label">🆕 신차종 관심 모델</label>
+                <div class="newmodel-chip-row mini" id="e-newModelChipRow"></div>
+                <select id="e-newModelTextInput" class="mini-select">
+                  <option value="">— 모델 선택 —</option>
+                  <option>A-Class</option><option>CLA</option><option>GLA / GLB</option>
+                  <option>C-Class</option><option>E-Class</option><option>S-Class</option>
+                  <option>CLE</option><option>GLC</option><option>GLE</option><option>GLS</option>
+                  <option>G-Class</option><option>AMG GT · SL</option><option>EQ</option>
+                  <option>Mercedes-Maybach</option>
+                </select>
+                <button type="button" class="newmodel-add-btn-mini" id="e-newModelAddBtn" disabled>+ 추가</button>
+                <input type="hidden" id="e-newModelInterest" value=""/>
+                <input type="hidden" id="e-newModelInterestText" value=""/>
+              </div>
             </div>
-            <input type="hidden" id="e-newModelInterest" value=""/>
-            <input type="hidden" id="e-newModelInterestText" value=""/>
           </div>
         </div></div>
       </div>
@@ -1401,6 +1514,9 @@
               <option>일시불</option><option>할부</option><option>리스</option>
               <option>장기렌트</option><option>법인할부</option><option>법인리스</option><option>미정</option>
             </select>
+          </div>
+          <div class="field"><label>메모</label>
+            <input type="text" id="e-financeMemo"/>
           </div>
         </div></div>
       </div>
@@ -1993,6 +2109,10 @@ function buildCard(c,idx){
     if(nmModels.length===0)html+='<span class="chip newmodel-chip">🆕 신차종 관심</span>';
     else nmModels.forEach(function(m){html+='<span class="chip newmodel-chip">🆕 '+esc(m)+'</span>';});
   }
+  if(c.extraInterestedModels){
+    var exModels=(c.extraInterestedModels||'').split(',').map(function(s){return s.trim();}).filter(Boolean);
+    exModels.forEach(function(m){html+='<span class="chip extra-model-card-chip">🚗 '+esc(m)+'</span>';});
+  }
   if(c.promoAlert)html+='<span class="chip promo-chip">💰 프로모션 알림</span>';
   if(c.leadSource)html+='<span class="chip">'+esc(c.leadSource)+'</span>';
 
@@ -2059,6 +2179,9 @@ function buildCard(c,idx){
     if(c.contractDate)html+=dr("계약일",c.contractDate);
     if(c.deliveryDate){var del2=parseD(c.deliveryDate);var elp=del2?Math.round((todayD()-del2)/86400000):0;var delLbl=esc(c.deliveryDate);if(elp>=1095)delLbl+='<span class="dd urg"> 3년↑</span>';else if(elp>=365)delLbl+='<span class="dd warn"> 1년↑</span>';html+='<div class="d-row"><span class="d-key">출고일</span><span class="d-val">'+delLbl+'</span></div>';}
     if(c.deliveryMonth)html+=dr("출고월",c.deliveryMonth);
+    if(c.plateNum)html+=dr("차량번호",c.plateNum);
+    if(c.financeMethod)html+=dr("금융방법",c.financeMethod);
+    if(c.financeMemo)html+=dr("메모",c.financeMemo);
     var hasService=c.lastServiceDate||c.lastServiceMileage||c.currentMileage||c.nextServiceDate||c.nextServiceMileage;
     if(hasService){
       html+='<div class="d-sec care">🔧 벤츠 정기점검</div>';
@@ -2164,9 +2287,11 @@ function submitNew(){
     tags:document.getElementById("tags").value.trim(),
     newModelInterest:document.getElementById("newModelInterest").checked,
     newModelInterestText:document.getElementById("newModelInterestText").value.trim(),
+    extraInterestedModels:document.getElementById("extraModelText").value.trim(),
     ownedVehicles:getVehiclesForSave(''),
     plateNum:document.getElementById("plateNum").value.trim(),
     financeMethod:document.getElementById("financeMethod").value,
+    financeMemo:document.getElementById("financeMemo").value.trim(),
     lastServiceDate:document.getElementById("lastServiceDate").value,
     lastServiceMileage:document.getElementById("lastServiceMileage").value,
     currentMileageDate:document.getElementById("currentMileageDate").value,
@@ -2209,10 +2334,12 @@ function resetNewForm(){
   resetVehicles('');
   var pn=document.getElementById("plateNum"); if(pn)pn.value="";
   var fm=document.getElementById("financeMethod"); if(fm)fm.selectedIndex=0;
+  var fmemo=document.getElementById("financeMemo"); if(fmemo)fmemo.value="";
   closeToggleCard('careToggleBtn','careToggleBody');
   closeToggleCard('serviceToggleBtn','serviceToggleBody');
   resetModelChips('');
   var nmTextInp=document.getElementById("newModelTextInput"); if(nmTextInp)nmTextInp.value="";
+  resetExtraModelChips('');
 }
 
 // ── 추가상담 저장 ────────────────────────────────────────────
@@ -2276,9 +2403,12 @@ function openEditByIdx(idx){
   sv("e-deliveryMonth",fm);sv("e-tags",c.tags);
   var savedChips = (c.newModelInterestText||'').split(',').map(function(s){return s.trim();}).filter(Boolean);
   setTimeout(function(){ setModelChips('e-', savedChips); }, 60);
+  var savedExtraChips = (c.extraInterestedModels||'').split(',').map(function(s){return s.trim();}).filter(Boolean);
+  setTimeout(function(){ setExtraModelChips('e-', savedExtraChips); }, 60);
   loadVehiclesToForm('e-', c.ownedVehicles||[]);
   sv("e-plateNum", c.plateNum);
   sv("e-financeMethod", c.financeMethod);
+  sv("e-financeMemo", c.financeMemo);
   sv("e-lastServiceDate",c.lastServiceDate);sv("e-lastServiceMileage",c.lastServiceMileage);
   sv("e-currentMileageDate",c.currentMileageDate);sv("e-currentMileage",c.currentMileage);
   sv("e-nextServiceDate",c.nextServiceDate);sv("e-nextServiceMileage",c.nextServiceMileage);
@@ -2353,9 +2483,11 @@ function submitEdit(){
     tags:document.getElementById("e-tags").value.trim(),
     newModelInterest:document.getElementById("e-newModelInterest").checked,
     newModelInterestText:document.getElementById("e-newModelInterestText").value.trim(),
+    extraInterestedModels:document.getElementById("e-extraModelText").value.trim(),
     ownedVehicles:getVehiclesForSave('e-'),
     plateNum:document.getElementById("e-plateNum").value.trim(),
     financeMethod:document.getElementById("e-financeMethod").value,
+    financeMemo:document.getElementById("e-financeMemo").value.trim(),
     lastServiceDate:document.getElementById("e-lastServiceDate").value,
     lastServiceMileage:document.getElementById("e-lastServiceMileage").value,
     currentMileageDate:document.getElementById("e-currentMileageDate").value,
@@ -3063,6 +3195,10 @@ function initEvents(){
   try{ bindNewModelToggle(''); renderNewModelChips(''); }catch(e){}
   try{ bindNewModelToggle('e-'); }catch(e){}
 
+  /* ── 추가 관심 모델 (현재 판매 중) ── */
+  try{ bindExtraModelToggle(''); renderExtraModelChips(''); }catch(e){}
+  try{ bindExtraModelToggle('e-'); }catch(e){}
+
   /* ── 차량관리/정기점검 카드 토글 ── */
   try{
     bindCardToggle('careToggleBtn', 'careToggleBody');
@@ -3091,6 +3227,15 @@ function initEvents(){
       var vid = parseInt(vehicleRemoveBtn.getAttribute('data-vehicle-remove'));
       var vprefix = vehicleRemoveBtn.getAttribute('data-vehicle-prefix')||'';
       if(!isNaN(vid)) removeVehicleRow(vprefix, vid);
+      return;
+    }
+
+    /* 추가관심모델 칩 삭제 */
+    var extraChipRemoveBtn = e.target.closest('[data-extrachip-remove]');
+    if(extraChipRemoveBtn){
+      var extraIdx = parseInt(extraChipRemoveBtn.getAttribute('data-extrachip-remove'));
+      var extraPrefix = extraChipRemoveBtn.getAttribute('data-extrachip-prefix')||'';
+      if(!isNaN(extraIdx)) removeExtraModelChip(extraPrefix, extraIdx);
       return;
     }
 
@@ -3384,6 +3529,74 @@ window.addEventListener('scroll', function(){
 /* 체크박스 토글 시 입력창 표시 */
 /* 관심모델 칩 배열 메모리 저장소 */
 var newModelChips = { '': [], 'e-': [] };
+var extraModelChips = { '': [], 'e-': [] };
+
+function renderExtraModelChips(prefix){
+  var row = document.getElementById(prefix+'extraModelChipRow');
+  if(!row) return;
+  var chips = extraModelChips[prefix] || [];
+  if(chips.length === 0){
+    row.innerHTML = '<div class="newmodel-chip-empty">추가된 관심 모델이 없습니다</div>';
+  } else {
+    row.innerHTML = chips.map(function(m, idx){
+      return '<span class="newmodel-chip extra-model-chip">'+esc(m)+'<button type="button" class="chip-remove" data-extrachip-remove="'+idx+'" data-extrachip-prefix="'+prefix+'">✕</button></span>';
+    }).join('');
+  }
+  var hiddenTxt = document.getElementById(prefix+'extraModelText');
+  if(hiddenTxt) hiddenTxt.value = chips.join(', ');
+}
+
+function addExtraModelChip(prefix){
+  var sel = document.getElementById(prefix+'extraModelSelect');
+  var modelVal = sel ? sel.value : '';
+  if(!modelVal){
+    alert('모델을 선택해주세요.');
+    return;
+  }
+  if(!extraModelChips[prefix]) extraModelChips[prefix] = [];
+  if(extraModelChips[prefix].indexOf(modelVal) >= 0){
+    alert('이미 추가된 모델입니다: '+modelVal);
+    return;
+  }
+  extraModelChips[prefix].push(modelVal);
+  renderExtraModelChips(prefix);
+  if(sel) sel.value = '';
+  updateExtraModelAddBtnState(prefix);
+}
+
+function removeExtraModelChip(prefix, idx){
+  if(!extraModelChips[prefix]) return;
+  extraModelChips[prefix].splice(idx, 1);
+  renderExtraModelChips(prefix);
+}
+
+function setExtraModelChips(prefix, list){
+  extraModelChips[prefix] = (list||[]).slice();
+  renderExtraModelChips(prefix);
+}
+
+function resetExtraModelChips(prefix){
+  extraModelChips[prefix] = [];
+  renderExtraModelChips(prefix);
+}
+
+function updateExtraModelAddBtnState(prefix){
+  var sel = document.getElementById(prefix+'extraModelSelect');
+  var btn = document.getElementById(prefix+'extraModelAddBtn');
+  if(sel && btn) btn.disabled = !sel.value;
+}
+
+function bindExtraModelToggle(prefix){
+  var addBtn = document.getElementById(prefix+'extraModelAddBtn');
+  var sel = document.getElementById(prefix+'extraModelSelect');
+  if(addBtn){
+    addBtn.addEventListener('click', function(){ addExtraModelChip(prefix); });
+  }
+  if(sel){
+    sel.addEventListener('change', function(){ updateExtraModelAddBtnState(prefix); });
+    updateExtraModelAddBtnState(prefix);
+  }
+}
 
 function renderNewModelChips(prefix){
   var row = document.getElementById(prefix+'newModelChipRow');
@@ -3405,11 +3618,10 @@ function renderNewModelChips(prefix){
 }
 
 function addCurrentModelChip(prefix){
-  var textInput = document.getElementById(prefix+'newModelTextInput');
-  var modelVal = textInput ? textInput.value.trim() : '';
+  var sel = document.getElementById(prefix+'newModelTextInput');
+  var modelVal = sel ? sel.value : '';
   if(!modelVal){
-    alert('관심 모델명을 입력해주세요. (예: EQA, 신형 E클래스 등)');
-    if(textInput) textInput.focus();
+    alert('모델을 선택해주세요.');
     return;
   }
   if(!newModelChips[prefix]) newModelChips[prefix] = [];
@@ -3419,7 +3631,8 @@ function addCurrentModelChip(prefix){
   }
   newModelChips[prefix].push(modelVal);
   renderNewModelChips(prefix);
-  if(textInput){ textInput.value=''; textInput.focus(); }
+  if(sel) sel.value = '';
+  updateNewModelAddBtnState(prefix);
 }
 
 function removeModelChip(prefix, idx){
@@ -3438,16 +3651,21 @@ function resetModelChips(prefix){
   renderNewModelChips(prefix);
 }
 
+function updateNewModelAddBtnState(prefix){
+  var sel = document.getElementById(prefix+'newModelTextInput');
+  var btn = document.getElementById(prefix+'newModelAddBtn');
+  if(sel && btn) btn.disabled = !sel.value;
+}
+
 function bindNewModelToggle(prefix){
   var addBtn = document.getElementById(prefix+'newModelAddBtn');
-  var textInput = document.getElementById(prefix+'newModelTextInput');
+  var sel = document.getElementById(prefix+'newModelTextInput');
   if(addBtn){
     addBtn.addEventListener('click', function(){ addCurrentModelChip(prefix); });
   }
-  if(textInput){
-    textInput.addEventListener('keydown', function(e){
-      if(e.key === 'Enter'){ e.preventDefault(); addCurrentModelChip(prefix); }
-    });
+  if(sel){
+    sel.addEventListener('change', function(){ updateNewModelAddBtnState(prefix); });
+    updateNewModelAddBtnState(prefix);
   }
 }
 
