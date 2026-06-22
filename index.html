@@ -649,6 +649,50 @@
     }
     .promo-filter-btn:hover{background:#c5ecd5;}
     .promo-filter-btn.active{background:#0f6e35;color:#fff;border-color:#0f6e35;}
+
+    /* ── 보유 차량 목록 ── */
+    .vehicle-item{
+      background:var(--surface2);border:1px solid var(--border);
+      border-radius:10px;padding:12px 14px;margin-bottom:10px;
+      position:relative;
+    }
+    .vehicle-item-header{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:8px;
+    }
+    .vehicle-item-num{
+      font-size:11px;font-weight:800;color:var(--purple);
+      background:#f0e5ff;padding:2px 9px;border-radius:20px;
+    }
+    .vehicle-remove-btn{
+      width:24px;height:24px;border-radius:50%;border:none;
+      background:#fde8e8;color:#a01515;font-size:14px;font-weight:800;
+      cursor:pointer;display:flex;align-items:center;justify-content:center;
+      transition:background .15s;
+    }
+    .vehicle-remove-btn:hover{background:#f5c5c5;}
+    .vehicle-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .vehicle-fields .vf-full{grid-column:1/-1;}
+    .vehicle-fields input,.vehicle-fields select{
+      width:100%;padding:9px 11px;border:1px solid var(--border2);
+      border-radius:8px;font-family:var(--font);font-size:13px;
+      background:#fff;outline:none;
+    }
+    .vehicle-fields input:focus,.vehicle-fields select:focus{
+      border-color:var(--purple);box-shadow:0 0 0 2px rgba(122,61,184,.1);
+    }
+    .vehicle-fields label{font-size:10px;font-weight:600;color:var(--text-dim);display:block;margin-bottom:3px;}
+    .add-vehicle-btn{
+      width:100%;padding:11px;border:1.5px dashed var(--purple);
+      border-radius:10px;background:#faf5ff;color:var(--purple);
+      font-family:var(--font);font-size:13px;font-weight:700;
+      cursor:pointer;transition:all .15s;
+    }
+    .add-vehicle-btn:hover{background:#f0e5ff;}
+    .vehicle-empty-hint{
+      text-align:center;padding:14px;color:var(--text-lt);font-size:12px;
+    }
+    @media(max-width:640px){.vehicle-fields{grid-template-columns:1fr;}}
   </style>
 </head>
 <body>
@@ -948,6 +992,13 @@
       </div></div>
     </div>
     <div class="form-card">
+      <div class="form-card-header care">🚙 보유 차량 목록 <span style="font-size:10px;color:var(--text-lt);font-weight:500;">(법인/복수구매 고객용)</span></div>
+      <div class="form-body">
+        <div id="ownedVehiclesList"></div>
+        <button type="button" class="add-vehicle-btn" id="addVehicleBtn">+ 차량 추가</button>
+      </div>
+    </div>
+    <div class="form-card">
       <div class="form-card-header care">🚗 차량관리 / 금융관리</div>
       <div class="form-body"><div class="grid-2">
         <div class="field"><label>보험가입일</label><input type="date" id="insuranceStartDate" class="care-input"/></div>
@@ -1240,6 +1291,13 @@
           </div>
         </div>
         </div></div>
+      </div>
+      <div class="form-card">
+        <div class="form-card-header care">🚙 보유 차량 목록 <span style="font-size:10px;color:var(--text-lt);font-weight:500;">(법인/복수구매 고객용)</span></div>
+        <div class="form-body">
+          <div id="e-ownedVehiclesList"></div>
+          <button type="button" class="add-vehicle-btn" id="e-addVehicleBtn">+ 차량 추가</button>
+        </div>
       </div>
       <div class="form-card">
         <div class="form-card-header care">🚗 차량관리 / 금융관리</div>
@@ -1898,6 +1956,22 @@ function buildCard(c,idx){
     if(c.inspectionDueDate){var inD2=dFrom(c.inspectionDueDate);html+='<div class="d-row"><span class="d-key">자동차검사일</span><span class="d-val">'+esc(c.inspectionDueDate)+ddTag(inD2,30)+'</span></div>';}
     if(c.financeStartDate)html+=dr("금융시작일",c.financeStartDate);
     if(c.financeEndDate){var fD2=dFrom(c.financeEndDate);html+='<div class="d-row"><span class="d-key">금융종료일</span><span class="d-val">'+esc(c.financeEndDate)+ddTag(fD2,90)+'</span></div>';}
+    if(c.ownedVehicles&&c.ownedVehicles.length>0){
+      html+='<div class="d-sec care">🚙 보유 차량 ('+c.ownedVehicles.length+'대)</div>';
+      c.ownedVehicles.forEach(function(v,vi){
+        var vLabel=(v.model||'')+(v.detail?' · '+v.detail:'')||'(모델 미입력)';
+        html+='<div style="background:#faf5ff;border:1px solid #e0c8f5;border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:12px;">';
+        html+='<div style="font-weight:700;color:var(--purple);margin-bottom:3px;">#'+ (vi+1) +' '+esc(vLabel)+'</div>';
+        var vDetails=[];
+        if(v.plateNum)vDetails.push('🚘 '+esc(v.plateNum));
+        if(v.deliveryDate)vDetails.push('📅 출고:'+esc(v.deliveryDate));
+        if(v.insuranceExpireDate)vDetails.push('🛡 보험만기:'+esc(v.insuranceExpireDate));
+        if(v.inspectionDueDate)vDetails.push('🔧 검사:'+esc(v.inspectionDueDate));
+        if(vDetails.length)html+='<div style="color:var(--text-dim);font-size:11px;">'+vDetails.join(' · ')+'</div>';
+        if(v.memo)html+='<div style="color:var(--text-lt);font-size:11px;margin-top:2px;">📝 '+esc(v.memo)+'</div>';
+        html+='</div>';
+      });
+    }
     html+='<div class="d-sec care">계약 / 출고</div>';
     if(c.contractDate)html+=dr("계약일",c.contractDate);
     if(c.deliveryDate){var del2=parseD(c.deliveryDate);var elp=del2?Math.round((todayD()-del2)/86400000):0;var delLbl=esc(c.deliveryDate);if(elp>=1095)delLbl+='<span class="dd urg"> 3년↑</span>';else if(elp>=365)delLbl+='<span class="dd warn"> 1년↑</span>';html+='<div class="d-row"><span class="d-key">출고일</span><span class="d-val">'+delLbl+'</span></div>';}
@@ -2007,6 +2081,7 @@ function submitNew(){
     tags:document.getElementById("tags").value.trim(),
     newModelInterest:document.getElementById("newModelInterest").checked,
     newModelInterestText:document.getElementById("newModelInterestText").value.trim(),
+    ownedVehicles:getVehiclesForSave(''),
     lastServiceDate:document.getElementById("lastServiceDate").value,
     lastServiceMileage:document.getElementById("lastServiceMileage").value,
     currentMileageDate:document.getElementById("currentMileageDate").value,
@@ -2052,6 +2127,7 @@ function resetNewForm(){
   if(nmChk)nmChk.checked=false;
   if(nmWrap)nmWrap.classList.remove("show");
   if(nmText)nmText.value="";
+  resetVehicles('');
 }
 
 // ── 추가상담 저장 ────────────────────────────────────────────
@@ -2118,6 +2194,7 @@ function openEditByIdx(idx){
   var eNmText=document.getElementById("e-newModelInterestText");
   if(eNmChk){eNmChk.checked=!!c.newModelInterest;if(eNmWrap)eNmWrap.classList.toggle("show",!!c.newModelInterest);}
   if(eNmText)eNmText.value=c.newModelInterestText||"";
+  loadVehiclesToForm('e-', c.ownedVehicles||[]);
   sv("e-lastServiceDate",c.lastServiceDate);sv("e-lastServiceMileage",c.lastServiceMileage);
   sv("e-currentMileageDate",c.currentMileageDate);sv("e-currentMileage",c.currentMileage);
   sv("e-nextServiceDate",c.nextServiceDate);sv("e-nextServiceMileage",c.nextServiceMileage);
@@ -2192,6 +2269,7 @@ function submitEdit(){
     tags:document.getElementById("e-tags").value.trim(),
     newModelInterest:document.getElementById("e-newModelInterest").checked,
     newModelInterestText:document.getElementById("e-newModelInterestText").value.trim(),
+    ownedVehicles:getVehiclesForSave('e-'),
     lastServiceDate:document.getElementById("e-lastServiceDate").value,
     lastServiceMileage:document.getElementById("e-lastServiceMileage").value,
     currentMileageDate:document.getElementById("e-currentMileageDate").value,
@@ -2898,6 +2976,15 @@ function initEvents(){
   /* ── 신차종 관심 고객 ── */
   try{ bindNewModelToggle(''); }catch(e){}
   try{ bindNewModelToggle('e-'); }catch(e){}
+
+  /* ── 보유 차량 목록 ── */
+  try{
+    var addVehicleBtn = document.getElementById('addVehicleBtn');
+    if(addVehicleBtn) addVehicleBtn.addEventListener('click', function(){ addVehicleRow(''); });
+    var eAddVehicleBtn = document.getElementById('e-addVehicleBtn');
+    if(eAddVehicleBtn) eAddVehicleBtn.addEventListener('click', function(){ addVehicleRow('e-'); });
+    renderOwnedVehicles('');
+  }catch(e){}
   var newModelFilterBtn = document.getElementById('newModelFilterBtn');
   if(newModelFilterBtn) newModelFilterBtn.addEventListener('click', toggleNewModelFilter);
   var promoFilterBtn = document.getElementById('promoFilterBtn');
@@ -2905,6 +2992,15 @@ function initEvents(){
 
   /* ── 동적 생성 버튼 이벤트 위임 (팝업 내 체크/삭제/수정 등) ── */
   document.addEventListener('click', function(e){
+
+    /* 차량 삭제 */
+    var vehicleRemoveBtn = e.target.closest('[data-vehicle-remove]');
+    if(vehicleRemoveBtn){
+      var vid = parseInt(vehicleRemoveBtn.getAttribute('data-vehicle-remove'));
+      var vprefix = vehicleRemoveBtn.getAttribute('data-vehicle-prefix')||'';
+      if(!isNaN(vid)) removeVehicleRow(vprefix, vid);
+      return;
+    }
 
     /* 프로모션 알림 토글 */
     var promoToggleBtn = e.target.closest('[data-promo-idx]');
@@ -3359,6 +3455,115 @@ function renderPromoList(){
 
   html += '</div></div>';
   panel.innerHTML = html;
+}
+
+
+/* ══════════════════════════════════════
+   보유 차량 목록 관리 (법인/복수구매 고객용)
+══════════════════════════════════════ */
+
+/* 차량 데이터 저장소: prefix별로 메모리에서 관리 */
+var ownedVehicles = { '': [], 'e-': [] };
+var vehicleIdCounter = 0;
+
+/* 차량 모델 옵션 (간단 버전 - 대분류만) */
+var VEHICLE_MODEL_OPTIONS = ['A-Class','CLA','GLA / GLB','C-Class','E-Class','S-Class','CLE','GLC','GLE','GLS','G-Class','AMG GT · SL','EQ','Mercedes-Maybach'];
+
+/* 차량 항목 1개 HTML 생성 */
+function buildVehicleItemHtml(prefix, vId, v){
+  v = v || {};
+  var modelOpts = '<option value="">— 모델 선택 —</option>';
+  VEHICLE_MODEL_OPTIONS.forEach(function(m){
+    modelOpts += '<option value="'+esc(m)+'"'+(v.model===m?' selected':'')+'>'+esc(m)+'</option>';
+  });
+  return ''+
+    '<div class="vehicle-item" data-vid="'+vId+'">'+
+      '<div class="vehicle-item-header">'+
+        '<span class="vehicle-item-num">차량 #'+(vId+1)+'</span>'+
+        '<button type="button" class="vehicle-remove-btn" data-vehicle-remove="'+vId+'" data-vehicle-prefix="'+prefix+'">✕</button>'+
+      '</div>'+
+      '<div class="vehicle-fields">'+
+        '<div><label>모델</label><select data-vfield="model" data-vid="'+vId+'">'+modelOpts+'</select></div>'+
+        '<div><label>세부모델</label><input type="text" data-vfield="detail" data-vid="'+vId+'" value="'+esc(v.detail||'')+'" placeholder="예: E 250 AVANTGARDE"/></div>'+
+        '<div><label>출고일</label><input type="date" data-vfield="deliveryDate" data-vid="'+vId+'" value="'+esc(v.deliveryDate||'')+'"/></div>'+
+        '<div><label>차량번호</label><input type="text" data-vfield="plateNum" data-vid="'+vId+'" value="'+esc(v.plateNum||'')+'" placeholder="예: 12가 3456"/></div>'+
+        '<div><label>보험만기일</label><input type="date" data-vfield="insuranceExpireDate" data-vid="'+vId+'" value="'+esc(v.insuranceExpireDate||'')+'"/></div>'+
+        '<div><label>자동차검사일</label><input type="date" data-vfield="inspectionDueDate" data-vid="'+vId+'" value="'+esc(v.inspectionDueDate||'')+'"/></div>'+
+        '<div class="vf-full"><label>비고</label><input type="text" data-vfield="memo" data-vid="'+vId+'" value="'+esc(v.memo||'')+'" placeholder="예: 법인 대표 차량, 자녀용 등"/></div>'+
+      '</div>'+
+    '</div>';
+}
+
+/* 차량 목록 렌더 */
+function renderOwnedVehicles(prefix){
+  var container = document.getElementById(prefix+'ownedVehiclesList');
+  if(!container) return;
+  var vehicles = ownedVehicles[prefix] || [];
+  if(vehicles.length === 0){
+    container.innerHTML = '<div class="vehicle-empty-hint">등록된 보유 차량이 없습니다. 법인/복수구매 고객이면 아래 버튼으로 추가하세요.</div>';
+    return;
+  }
+  var html = '';
+  vehicles.forEach(function(v){
+    html += buildVehicleItemHtml(prefix, v.id, v);
+  });
+  container.innerHTML = html;
+
+  /* select/input 값 변경 시 메모리 데이터 동기화 */
+  container.querySelectorAll('[data-vfield]').forEach(function(el){
+    el.addEventListener('input', function(){ syncVehicleField(prefix, el); });
+    el.addEventListener('change', function(){ syncVehicleField(prefix, el); });
+  });
+}
+
+/* 입력값을 메모리 배열에 동기화 */
+function syncVehicleField(prefix, el){
+  var vid = parseInt(el.getAttribute('data-vid'));
+  var field = el.getAttribute('data-vfield');
+  var vehicles = ownedVehicles[prefix] || [];
+  var v = vehicles.find(function(x){ return x.id === vid; });
+  if(v) v[field] = el.value;
+}
+
+/* 차량 추가 */
+var MAX_VEHICLES = 20; /* 차량 최대 등록 가능 대수 */
+
+function addVehicleRow(prefix){
+  if(!ownedVehicles[prefix]) ownedVehicles[prefix] = [];
+  if(ownedVehicles[prefix].length >= MAX_VEHICLES){
+    alert('차량은 최대 '+MAX_VEHICLES+'대까지 등록 가능합니다.');
+    return;
+  }
+  ownedVehicles[prefix].push({ id: vehicleIdCounter++, model:'', detail:'', deliveryDate:'', plateNum:'', insuranceExpireDate:'', inspectionDueDate:'', memo:'' });
+  renderOwnedVehicles(prefix);
+}
+
+/* 차량 삭제 */
+function removeVehicleRow(prefix, vid){
+  if(!ownedVehicles[prefix]) return;
+  ownedVehicles[prefix] = ownedVehicles[prefix].filter(function(v){ return v.id !== vid; });
+  renderOwnedVehicles(prefix);
+}
+
+/* 차량 목록을 JSON으로 변환 (저장용) */
+function getVehiclesForSave(prefix){
+  return (ownedVehicles[prefix]||[]).map(function(v){
+    return { model:v.model||'', detail:v.detail||'', deliveryDate:v.deliveryDate||'', plateNum:v.plateNum||'', insuranceExpireDate:v.insuranceExpireDate||'', inspectionDueDate:v.inspectionDueDate||'', memo:v.memo||'' };
+  });
+}
+
+/* 저장된 차량 데이터를 폼에 불러오기 */
+function loadVehiclesToForm(prefix, savedVehicles){
+  ownedVehicles[prefix] = (savedVehicles||[]).map(function(v){
+    return Object.assign({ id: vehicleIdCounter++ }, v);
+  });
+  renderOwnedVehicles(prefix);
+}
+
+/* 차량 목록 초기화 (신규등록 폼 리셋용) */
+function resetVehicles(prefix){
+  ownedVehicles[prefix] = [];
+  renderOwnedVehicles(prefix);
 }
 
 document.addEventListener('DOMContentLoaded', function(){
