@@ -576,16 +576,9 @@
     .name-search-empty{padding:14px;text-align:center;color:var(--text-lt);font-size:12px;}
 
     /* ── 신차종 관심 고객 ── */
-    .newmodel-check-label{
-      display:flex;align-items:center;gap:8px;
-      font-size:13px;font-weight:700;color:var(--text);
-      cursor:pointer;padding:10px 14px;
-      background:#fff5e0;border:1.5px solid #ffd88a;border-radius:10px;
-      transition:all .15s;
-    }
-    .newmodel-check-label:hover{background:#fff0d0;}
-    .newmodel-check-label input[type="checkbox"]{
-      width:18px;height:18px;accent-color:var(--gold);cursor:pointer;flex-shrink:0;
+    .newmodel-section-label{
+      font-size:13px;font-weight:700;color:var(--gold-dk);
+      margin-bottom:8px;display:block;
     }
     .newmodel-input-wrap{display:none;margin-top:8px;}
     .newmodel-input-wrap.show{display:block;}
@@ -735,6 +728,14 @@
       cursor:pointer;transition:all .15s;
     }
     .newmodel-add-btn:hover{background:#fff0d0;}
+    .newmodel-add-btn-inline{
+      padding:0 18px;height:auto;align-self:stretch;
+      border:1.5px dashed #e8b860;border-radius:9px;
+      background:#fffbf0;color:#8a5a00;
+      font-family:var(--font);font-size:12px;font-weight:700;
+      cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;
+    }
+    .newmodel-add-btn-inline:hover{background:#fff0d0;}
   </style>
 </head>
 <body>
@@ -974,6 +975,15 @@
             <div class="detail-custom-hint">✏️ 직접 입력한 값이 저장됩니다</div>
           </div>
         </div>
+        <div class="field full" style="margin-top:6px;">
+          <label>🆕 신차종 관심 모델 <span style="font-size:10px;color:var(--text-lt);font-weight:500;">(여러 개 추가 가능)</span></label>
+          <div style="display:flex;gap:8px;align-items:flex-start;">
+            <div class="newmodel-chip-row" id="newModelChipRow" style="flex:1;"></div>
+            <button type="button" class="newmodel-add-btn-inline" id="newModelAddBtn">+ 추가</button>
+          </div>
+          <input type="hidden" id="newModelInterest" value=""/>
+          <input type="hidden" id="newModelInterestText" value=""/>
+        </div>
       </div></div>
     </div>
     <div class="form-card">
@@ -1087,18 +1097,7 @@
       <div class="form-card-header">기타</div>
       <div class="form-body">
         <div class="field"><label>태그</label><input type="text" id="tags" placeholder="예: VIP, 재구매, 법인"/></div>
-        <div class="field full" style="margin-top:10px;">
-          <label class="newmodel-check-label">
-            <input type="checkbox" id="newModelInterest"/>
-            🆕 신차종 관심 고객으로 등록
-          </label>
-          <div class="newmodel-input-wrap" id="newModelInputWrap">
-            <div class="newmodel-chip-row" id="newModelChipRow"></div>
-            <button type="button" class="newmodel-add-btn" id="newModelAddBtn">+ 현재 선택된 모델 추가</button>
-            <div class="newmodel-hint">📌 위 "차량 관심 정보"에서 모델을 선택한 뒤 버튼을 누르면 추가됩니다. 여러 모델 추가 가능합니다.</div>
-            <input type="hidden" id="newModelInterestText" value=""/>
-          </div>
-        </div>
+        
       </div>
     </div>
     <button class="btn-submit" id="submitNewBtn">고객 정보 저장</button>
@@ -1291,6 +1290,15 @@
               <div class="detail-custom-hint">✏️ 직접 입력한 값이 저장됩니다</div>
             </div>
           </div>
+          <div class="field full" style="margin-top:6px;">
+            <label>🆕 신차종 관심 모델 <span style="font-size:10px;color:var(--text-lt);font-weight:500;">(여러 개 추가 가능)</span></label>
+            <div style="display:flex;gap:8px;align-items:flex-start;">
+              <div class="newmodel-chip-row" id="e-newModelChipRow" style="flex:1;"></div>
+              <button type="button" class="newmodel-add-btn-inline" id="e-newModelAddBtn">+ 추가</button>
+            </div>
+            <input type="hidden" id="e-newModelInterest" value=""/>
+            <input type="hidden" id="e-newModelInterestText" value=""/>
+          </div>
         </div></div>
       </div>
       <div class="form-card">
@@ -1398,18 +1406,7 @@
         <div class="form-card-header">기타</div>
         <div class="form-body">
           <div class="field"><label>태그</label><input type="text" id="e-tags"/></div>
-          <div class="field full" style="margin-top:10px;">
-            <label class="newmodel-check-label">
-              <input type="checkbox" id="e-newModelInterest"/>
-              🆕 신차종 관심 고객으로 등록
-            </label>
-            <div class="newmodel-input-wrap" id="e-newModelInputWrap">
-              <div class="newmodel-chip-row" id="e-newModelChipRow"></div>
-              <button type="button" class="newmodel-add-btn" id="e-newModelAddBtn">+ 현재 선택된 모델 추가</button>
-              <div class="newmodel-hint">📌 위 "차량 관심 정보"에서 모델을 선택한 뒤 버튼을 누르면 추가됩니다. 여러 모델 추가 가능합니다.</div>
-              <input type="hidden" id="e-newModelInterestText" value=""/>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -2207,12 +2204,6 @@ function resetNewForm(){
   if(dcInp)dcInp.value="";if(dcWrap)dcWrap.classList.remove("visible");
   ["purchaseMethod","leadSource","status"].forEach(function(id){var el=document.getElementById(id);if(el)el.selectedIndex=0;});
   resetMemo('');
-  var nmChk=document.getElementById("newModelInterest");
-  var nmWrap=document.getElementById("newModelInputWrap");
-  var nmText=document.getElementById("newModelInterestText");
-  if(nmChk)nmChk.checked=false;
-  if(nmWrap)nmWrap.classList.remove("show");
-  if(nmText)nmText.value="";
   resetVehicles('');
   var pn=document.getElementById("plateNum"); if(pn)pn.value="";
   var fm=document.getElementById("financeMethod"); if(fm)fm.selectedIndex=0;
@@ -2280,9 +2271,6 @@ function openEditByIdx(idx){
   sv("e-contractDate",c.contractDate);sv("e-deliveryDate",c.deliveryDate);
   var fm=c.deliveryMonth||"";if(!fm&&c.deliveryDate&&c.deliveryDate.length>=7)fm=c.deliveryDate.substring(0,7);
   sv("e-deliveryMonth",fm);sv("e-tags",c.tags);
-  var eNmChk=document.getElementById("e-newModelInterest");
-  var eNmWrap=document.getElementById("e-newModelInputWrap");
-  if(eNmChk){eNmChk.checked=!!c.newModelInterest;if(eNmWrap)eNmWrap.classList.toggle("show",!!c.newModelInterest);}
   var savedChips = (c.newModelInterestText||'').split(',').map(function(s){return s.trim();}).filter(Boolean);
   setTimeout(function(){ setModelChips('e-', savedChips); }, 60);
   loadVehiclesToForm('e-', c.ownedVehicles||[]);
@@ -3405,9 +3393,12 @@ function renderNewModelChips(prefix){
       return '<span class="newmodel-chip">'+esc(m)+'<button type="button" class="chip-remove" data-nmchip-remove="'+idx+'" data-nmchip-prefix="'+prefix+'">✕</button></span>';
     }).join('');
   }
-  /* hidden input에 콤마로 합쳐서 저장 (호환성 유지) */
+  /* hidden input에 콤마로 합쳐서 저장 */
   var hiddenTxt = document.getElementById(prefix+'newModelInterestText');
   if(hiddenTxt) hiddenTxt.value = chips.join(', ');
+  /* 칩이 1개 이상이면 관심고객 플래그 자동 ON */
+  var flagInput = document.getElementById(prefix+'newModelInterest');
+  if(flagInput) flagInput.value = chips.length > 0 ? '1' : '';
 }
 
 function addCurrentModelChip(prefix){
@@ -3443,15 +3434,7 @@ function resetModelChips(prefix){
 }
 
 function bindNewModelToggle(prefix){
-  var chk = document.getElementById(prefix+'newModelInterest');
-  var wrap = document.getElementById(prefix+'newModelInputWrap');
   var addBtn = document.getElementById(prefix+'newModelAddBtn');
-
-  if(chk && wrap){
-    chk.addEventListener('change', function(){
-      wrap.classList.toggle('show', chk.checked);
-    });
-  }
   if(addBtn){
     addBtn.addEventListener('click', function(){ addCurrentModelChip(prefix); });
   }
