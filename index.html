@@ -574,6 +574,81 @@
     .name-search-item .nsi-name{font-size:14px;font-weight:700;color:var(--black);}
     .name-search-item .nsi-meta{font-size:11px;color:var(--text-dim);margin-top:2px;}
     .name-search-empty{padding:14px;text-align:center;color:var(--text-lt);font-size:12px;}
+
+    /* ── 신차종 관심 고객 ── */
+    .newmodel-check-label{
+      display:flex;align-items:center;gap:8px;
+      font-size:13px;font-weight:700;color:var(--text);
+      cursor:pointer;padding:10px 14px;
+      background:#fff5e0;border:1.5px solid #ffd88a;border-radius:10px;
+      transition:all .15s;
+    }
+    .newmodel-check-label:hover{background:#fff0d0;}
+    .newmodel-check-label input[type="checkbox"]{
+      width:18px;height:18px;accent-color:var(--gold);cursor:pointer;flex-shrink:0;
+    }
+    .newmodel-input-wrap{display:none;margin-top:8px;}
+    .newmodel-input-wrap.show{display:block;}
+    .newmodel-hint{font-size:11px;color:var(--gold-dk);margin-top:5px;font-weight:600;}
+
+    /* 신차종 관심 chip (고객카드용) */
+    .chip.newmodel-chip{
+      background:linear-gradient(135deg,#fff0d0,#ffe0a0);
+      color:#8a5a00;font-weight:700;
+      border:1px solid #e8b860;
+    }
+
+    /* 신차종 필터 버튼 (고객목록 상단) */
+    .newmodel-filter-btn{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:8px 16px;border-radius:20px;
+      border:1.5px solid #e8b860;background:#fff8e8;color:#8a5a00;
+      font-family:var(--font);font-size:12px;font-weight:700;
+      cursor:pointer;transition:all .15s;white-space:nowrap;
+    }
+    .newmodel-filter-btn:hover{background:#ffe8b0;}
+    .newmodel-filter-btn.active{background:var(--gold);color:#fff;border-color:var(--gold);}
+
+    /* 신차종 모델 그룹 패널 */
+    .newmodel-group-panel{margin-bottom:12px;}
+    .newmodel-group-header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:10px 14px;background:linear-gradient(135deg,#fff5e0,#ffe8b8);
+      border-radius:10px 10px 0 0;border:1px solid #e8b860;
+      font-size:13px;font-weight:800;color:#8a5a00;cursor:pointer;
+    }
+    .newmodel-group-count{
+      background:var(--gold);color:#fff;font-size:11px;font-weight:700;
+      border-radius:20px;padding:2px 9px;
+    }
+
+    /* ── 프로모션 알림 ── */
+    .promo-toggle-btn{
+      display:inline-flex;align-items:center;gap:4px;
+      padding:5px 11px;border-radius:20px;
+      border:1.5px solid var(--border2);background:#fff;color:var(--text-dim);
+      font-family:var(--font);font-size:11px;font-weight:700;
+      cursor:pointer;transition:all .15s;white-space:nowrap;
+    }
+    .promo-toggle-btn:hover{border-color:#22aa55;color:#0a7a35;}
+    .promo-toggle-btn.active{
+      background:linear-gradient(135deg,#0f6e35,#1a9a4a);
+      border-color:#0f6e35;color:#fff;
+    }
+    .chip.promo-chip{
+      background:linear-gradient(135deg,#e3f7ec,#c5ecd5);
+      color:#0a5528;font-weight:700;border:1px solid #5fc890;
+    }
+    /* 프로모션 필터 버튼 (고객목록 상단) */
+    .promo-filter-btn{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:8px 16px;border-radius:20px;
+      border:1.5px solid #5fc890;background:#e3f7ec;color:#0a5528;
+      font-family:var(--font);font-size:12px;font-weight:700;
+      cursor:pointer;transition:all .15s;white-space:nowrap;
+    }
+    .promo-filter-btn:hover{background:#c5ecd5;}
+    .promo-filter-btn.active{background:#0f6e35;color:#fff;border-color:#0f6e35;}
   </style>
 </head>
 <body>
@@ -903,7 +978,19 @@
     </div>
     <div class="form-card">
       <div class="form-card-header">기타</div>
-      <div class="form-body"><div class="field"><label>태그</label><input type="text" id="tags" placeholder="예: VIP, 재구매, 법인"/></div></div>
+      <div class="form-body">
+        <div class="field"><label>태그</label><input type="text" id="tags" placeholder="예: VIP, 재구매, 법인"/></div>
+        <div class="field full" style="margin-top:10px;">
+          <label class="newmodel-check-label">
+            <input type="checkbox" id="newModelInterest"/>
+            🆕 신차종 관심 고객으로 등록
+          </label>
+          <div class="newmodel-input-wrap" id="newModelInputWrap">
+            <input type="text" id="newModelInterestText" placeholder="관심 모델명 입력 (예: 신형 E클래스, 차세대 GLC 등)"/>
+            <div class="newmodel-hint">📌 신차 출시 시 고객목록 → 신차종 관심 필터로 모아볼 수 있습니다</div>
+          </div>
+        </div>
+      </div>
     </div>
     <button class="btn-submit" id="submitNewBtn">고객 정보 저장</button>
     <div class="st-msg" id="msg-new"></div>
@@ -988,6 +1075,12 @@
       <input type="file" id="importFile" accept=".json" style="display:none"/>
       <button class="backup-btn danger" id="clearAllBtn">🗑 전체 삭제</button>
     </div>
+    <div class="backup-bar">
+      <button class="newmodel-filter-btn" id="newModelFilterBtn">🆕 신차종 관심 고객 보기</button>
+      <button class="promo-filter-btn" id="promoFilterBtn">💰 프로모션 알림 고객 보기</button>
+    </div>
+    <div id="newModelGroupPanel" style="display:none;margin-bottom:14px;"></div>
+    <div id="promoGroupPanel" style="display:none;margin-bottom:14px;"></div>
     <div class="filter-bar" id="filterBar">
       <div class="filter-label" id="filterLabel">전체 고객</div>
       <button class="filter-clear" id="clearFilterBtn">전체 보기 ✕</button>
@@ -1179,7 +1272,19 @@
       </div>
       <div class="form-card">
         <div class="form-card-header">기타</div>
-        <div class="form-body"><div class="field"><label>태그</label><input type="text" id="e-tags"/></div></div>
+        <div class="form-body">
+          <div class="field"><label>태그</label><input type="text" id="e-tags"/></div>
+          <div class="field full" style="margin-top:10px;">
+            <label class="newmodel-check-label">
+              <input type="checkbox" id="e-newModelInterest"/>
+              🆕 신차종 관심 고객으로 등록
+            </label>
+            <div class="newmodel-input-wrap" id="e-newModelInputWrap">
+              <input type="text" id="e-newModelInterestText" placeholder="관심 모델명 입력 (예: 신형 E클래스, 차세대 GLC 등)"/>
+              <div class="newmodel-hint">📌 신차 출시 시 고객목록 → 신차종 관심 필터로 모아볼 수 있습니다</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="st-msg edit-save-msg" id="edit-save-msg"></div>
@@ -1749,6 +1854,7 @@ function buildCard(c,idx){
     '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px;">'+
       '<span class="badge '+sc(c.status)+'">'+esc(sd)+'</span>'+
       '<button class="edit-btn" data-edit-idx="'+idx+'">✏️ 수정</button>'+
+      '<button class="promo-toggle-btn'+(c.promoAlert?' active':'')+'" data-promo-idx="'+idx+'">'+(c.promoAlert?'💰 프로모션 ON':'💰 프로모션 알림')+'</button>'+
     '</div>'+
   '</div>';
   html+='<div class="chip-row">';
@@ -1757,6 +1863,8 @@ function buildCard(c,idx){
   if(c.region)html+='<span class="chip">📍'+esc(c.region)+'</span>';
   if(c.nextContact)html+='<span class="chip">📅 '+esc(c.nextContact)+'</span>';
   if(c.nextContactMemo)html+='<span class="chip" style="background:#fffbe8;color:#8a6000;">📋 '+esc(c.nextContactMemo)+'</span>';
+  if(c.newModelInterest)html+='<span class="chip newmodel-chip">🆕 '+(esc(c.newModelInterestText)||'신차종 관심')+'</span>';
+  if(c.promoAlert)html+='<span class="chip promo-chip">💰 프로모션 알림</span>';
   if(c.leadSource)html+='<span class="chip">'+esc(c.leadSource)+'</span>';
 
   if(currentCareFilter==="birthday7"&&c.birthDate){var bd=bdayDiff(c.birthDate);html+='<span class="chip" style="background:#f0e5ff;color:var(--purple);font-weight:700;">🎂 생일 '+esc(c.birthDate)+(bd!==null?' D-'+bd:'')+'</span>';}
@@ -1897,6 +2005,8 @@ function submitNew(){
     contractDate:document.getElementById("contractDate").value,
     deliveryDate:deliveryDate,deliveryMonth:deliveryMonth,
     tags:document.getElementById("tags").value.trim(),
+    newModelInterest:document.getElementById("newModelInterest").checked,
+    newModelInterestText:document.getElementById("newModelInterestText").value.trim(),
     lastServiceDate:document.getElementById("lastServiceDate").value,
     lastServiceMileage:document.getElementById("lastServiceMileage").value,
     currentMileageDate:document.getElementById("currentMileageDate").value,
@@ -1936,6 +2046,12 @@ function resetNewForm(){
   if(dcInp)dcInp.value="";if(dcWrap)dcWrap.classList.remove("visible");
   ["purchaseMethod","leadSource","status"].forEach(function(id){var el=document.getElementById(id);if(el)el.selectedIndex=0;});
   resetMemo('');
+  var nmChk=document.getElementById("newModelInterest");
+  var nmWrap=document.getElementById("newModelInputWrap");
+  var nmText=document.getElementById("newModelInterestText");
+  if(nmChk)nmChk.checked=false;
+  if(nmWrap)nmWrap.classList.remove("show");
+  if(nmText)nmText.value="";
 }
 
 // ── 추가상담 저장 ────────────────────────────────────────────
@@ -1997,6 +2113,11 @@ function openEditByIdx(idx){
   sv("e-contractDate",c.contractDate);sv("e-deliveryDate",c.deliveryDate);
   var fm=c.deliveryMonth||"";if(!fm&&c.deliveryDate&&c.deliveryDate.length>=7)fm=c.deliveryDate.substring(0,7);
   sv("e-deliveryMonth",fm);sv("e-tags",c.tags);
+  var eNmChk=document.getElementById("e-newModelInterest");
+  var eNmWrap=document.getElementById("e-newModelInputWrap");
+  var eNmText=document.getElementById("e-newModelInterestText");
+  if(eNmChk){eNmChk.checked=!!c.newModelInterest;if(eNmWrap)eNmWrap.classList.toggle("show",!!c.newModelInterest);}
+  if(eNmText)eNmText.value=c.newModelInterestText||"";
   sv("e-lastServiceDate",c.lastServiceDate);sv("e-lastServiceMileage",c.lastServiceMileage);
   sv("e-currentMileageDate",c.currentMileageDate);sv("e-currentMileage",c.currentMileage);
   sv("e-nextServiceDate",c.nextServiceDate);sv("e-nextServiceMileage",c.nextServiceMileage);
@@ -2069,6 +2190,8 @@ function submitEdit(){
     contractDate:document.getElementById("e-contractDate").value,
     deliveryDate:deliveryDate,deliveryMonth:deliveryMonth,
     tags:document.getElementById("e-tags").value.trim(),
+    newModelInterest:document.getElementById("e-newModelInterest").checked,
+    newModelInterestText:document.getElementById("e-newModelInterestText").value.trim(),
     lastServiceDate:document.getElementById("e-lastServiceDate").value,
     lastServiceMileage:document.getElementById("e-lastServiceMileage").value,
     currentMileageDate:document.getElementById("e-currentMileageDate").value,
@@ -2772,8 +2895,24 @@ function initEvents(){
   var searchInput = document.getElementById('searchInput');
   if(searchInput) searchInput.addEventListener('input', renderList);
 
+  /* ── 신차종 관심 고객 ── */
+  try{ bindNewModelToggle(''); }catch(e){}
+  try{ bindNewModelToggle('e-'); }catch(e){}
+  var newModelFilterBtn = document.getElementById('newModelFilterBtn');
+  if(newModelFilterBtn) newModelFilterBtn.addEventListener('click', toggleNewModelFilter);
+  var promoFilterBtn = document.getElementById('promoFilterBtn');
+  if(promoFilterBtn) promoFilterBtn.addEventListener('click', togglePromoFilter);
+
   /* ── 동적 생성 버튼 이벤트 위임 (팝업 내 체크/삭제/수정 등) ── */
   document.addEventListener('click', function(e){
+
+    /* 프로모션 알림 토글 */
+    var promoToggleBtn = e.target.closest('[data-promo-idx]');
+    if(promoToggleBtn){
+      var promoIdx = parseInt(promoToggleBtn.getAttribute('data-promo-idx'));
+      if(!isNaN(promoIdx)) togglePromoAlert(promoIdx);
+      return;
+    }
 
     /* 스케줄 직접입력 완료 체크 */
     var schedDoneBtn = e.target.closest('[data-sched-done]');
@@ -3039,6 +3178,188 @@ window.addEventListener('scroll', function(){
     positionNameDropdown(nameInput, dropdown);
   }
 }, {passive:true});
+
+
+/* ══════════════════════════════════════
+   신차종 관심 고객 관리
+══════════════════════════════════════ */
+
+/* 체크박스 토글 시 입력창 표시 */
+function bindNewModelToggle(prefix){
+  var chk = document.getElementById(prefix+'newModelInterest');
+  var wrap = document.getElementById(prefix+'newModelInputWrap');
+  if(chk && wrap){
+    chk.addEventListener('change', function(){
+      wrap.classList.toggle('show', chk.checked);
+      if(!chk.checked){
+        var txt = document.getElementById(prefix+'newModelInterestText');
+        if(txt) txt.value = '';
+      }
+    });
+  }
+}
+
+var newModelFilterActive = false;
+
+/* 신차종 관심 고객 필터 토글 */
+function toggleNewModelFilter(){
+  newModelFilterActive = !newModelFilterActive;
+  var btn = document.getElementById('newModelFilterBtn');
+  var panel = document.getElementById('newModelGroupPanel');
+  if(newModelFilterActive){
+    btn.classList.add('active');
+    btn.textContent = '✕ 신차종 관심 고객 닫기';
+    renderNewModelGroups();
+    panel.style.display = 'block';
+  } else {
+    btn.classList.remove('active');
+    btn.textContent = '🆕 신차종 관심 고객 보기';
+    panel.style.display = 'none';
+  }
+}
+
+/* 신차종 관심 고객을 모델별로 그룹화해서 표시 */
+function renderNewModelGroups(){
+  var list = load();
+  var interested = list.filter(function(c){ return c.newModelInterest; });
+  var panel = document.getElementById('newModelGroupPanel');
+
+  if(interested.length === 0){
+    panel.innerHTML = '<div class="empty-state"><div class="empty-icon">🆕</div><p>신차종 관심 고객이 아직 없습니다</p></div>';
+    return;
+  }
+
+  /* 모델명별로 그룹화 (관심모델 텍스트가 있으면 그걸로, 없으면 기존 모델명) */
+  var groups = {};
+  interested.forEach(function(c){
+    var key = (c.newModelInterestText && c.newModelInterestText.trim()) || c.modelName || '기타';
+    if(!groups[key]) groups[key] = [];
+    groups[key].push(c);
+  });
+
+  var groupKeys = Object.keys(groups).sort(function(a,b){ return groups[b].length - groups[a].length; });
+
+  var html = '<div style="margin-bottom:10px;font-size:12px;color:var(--text-dim);font-weight:600;">총 '+interested.length+'명의 신차종 관심 고객</div>';
+
+  groupKeys.forEach(function(key, gIdx){
+    var customers = groups[key];
+    var panelId = 'nmgroup-'+gIdx;
+    html += '<div class="newmodel-group-panel">';
+    html += '<div class="newmodel-group-header" data-nmtog="'+panelId+'">';
+    html += '<span>🚗 '+esc(key)+'</span>';
+    html += '<span class="newmodel-group-count">'+customers.length+'명</span>';
+    html += '</div>';
+    html += '<div id="'+panelId+'" style="display:none;background:#fff;border:1px solid #e8b860;border-top:none;border-radius:0 0 10px 10px;padding:4px;">';
+    customers.forEach(function(c){
+      var sd = c.status || '—';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border);">';
+      html += '<div>';
+      html += '<div style="font-size:14px;font-weight:700;color:var(--black);">'+esc(c.customerName)+' <span class="badge '+sc(c.status)+'" style="font-size:10px;">'+esc(sd)+'</span></div>';
+      html += '<div style="font-size:11px;color:var(--text-dim);margin-top:2px;">📞 '+esc(c.phone||'-')+(c.region?' · 📍'+esc(c.region):'')+'</div>';
+      html += '</div>';
+      if(c.phone) html += '<a href="tel:'+esc(c.phone)+'" style="padding:6px 14px;background:var(--black);color:#fff;border-radius:20px;text-decoration:none;font-size:12px;font-weight:700;white-space:nowrap;">📞 전화</a>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+  });
+
+  panel.innerHTML = html;
+
+  /* 그룹 펼치기/접기 */
+  panel.querySelectorAll('[data-nmtog]').forEach(function(header){
+    header.addEventListener('click', function(){
+      var targetId = header.getAttribute('data-nmtog');
+      var target = document.getElementById(targetId);
+      if(target){
+        var isOpen = target.style.display === 'block';
+        target.style.display = isOpen ? 'none' : 'block';
+      }
+    });
+  });
+}
+
+
+/* ══════════════════════════════════════
+   프로모션 알림 고객 관리
+══════════════════════════════════════ */
+
+var promoFilterActive = false;
+
+/* 프로모션 알림 토글 (고객목록에서 바로 클릭) */
+function togglePromoAlert(idx){
+  var c = renderedCustomers[idx];
+  if(!c){ alert('고객 정보를 찾을 수 없습니다.'); return; }
+  var list = load();
+  var np = normP(c.phone);
+  var targetIdx = -1;
+  if(np){
+    for(var i=0;i<list.length;i++){
+      if(normP(list[i].phone)===np){ targetIdx=i; break; }
+    }
+  }
+  /* 연락처로 못 찾으면 저장시각+이름으로 보조 매칭 */
+  if(targetIdx<0){
+    for(var j=0;j<list.length;j++){
+      if(list[j].customerName===c.customerName && list[j]._savedAt===c._savedAt){ targetIdx=j; break; }
+    }
+  }
+  if(targetIdx<0){ alert('고객 정보를 찾을 수 없습니다. 목록을 새로고침해주세요.'); return; }
+  list[targetIdx].promoAlert = !list[targetIdx].promoAlert;
+  save(list);
+  renderList();
+  if(promoFilterActive) renderPromoList();
+}
+
+/* 프로모션 알림 고객 목록 필터 토글 */
+function togglePromoFilter(){
+  promoFilterActive = !promoFilterActive;
+  var btn = document.getElementById('promoFilterBtn');
+  var panel = document.getElementById('promoGroupPanel');
+  if(promoFilterActive){
+    btn.classList.add('active');
+    btn.textContent = '✕ 프로모션 알림 고객 닫기';
+    renderPromoList();
+    panel.style.display = 'block';
+  } else {
+    btn.classList.remove('active');
+    btn.textContent = '💰 프로모션 알림 고객 보기';
+    panel.style.display = 'none';
+  }
+}
+
+/* 프로모션 알림 고객 전체 목록 표시 */
+function renderPromoList(){
+  var list = load();
+  var promoCustomers = list.filter(function(c){ return c.promoAlert; });
+  var panel = document.getElementById('promoGroupPanel');
+
+  if(promoCustomers.length === 0){
+    panel.innerHTML = '<div class="empty-state"><div class="empty-icon">💰</div><p>프로모션 알림 고객이 아직 없습니다</p></div>';
+    return;
+  }
+
+  var html = '<div class="newmodel-group-panel">';
+  html += '<div class="newmodel-group-header" style="background:linear-gradient(135deg,#e3f7ec,#c5ecd5);border-color:#5fc890;color:#0a5528;cursor:default;">';
+  html += '<span>💰 프로모션 알림 받고 싶은 고객</span>';
+  html += '<span class="newmodel-group-count" style="background:#0f6e35;">'+promoCustomers.length+'명</span>';
+  html += '</div>';
+  html += '<div style="background:#fff;border:1px solid #5fc890;border-top:none;border-radius:0 0 10px 10px;padding:4px;">';
+
+  promoCustomers.forEach(function(c){
+    var sd = c.status || '—';
+    var model = (c.modelName||'')+(c.detailModel?' · '+c.detailModel:'');
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border);">';
+    html += '<div>';
+    html += '<div style="font-size:14px;font-weight:700;color:var(--black);">'+esc(c.customerName)+' <span class="badge '+sc(c.status)+'" style="font-size:10px;">'+esc(sd)+'</span></div>';
+    html += '<div style="font-size:11px;color:var(--text-dim);margin-top:2px;">📞 '+esc(c.phone||'-')+(model?' · 🚗 '+esc(model):'')+(c.region?' · 📍'+esc(c.region):'')+'</div>';
+    html += '</div>';
+    if(c.phone) html += '<a href="tel:'+esc(c.phone)+'" style="padding:6px 14px;background:#0f6e35;color:#fff;border-radius:20px;text-decoration:none;font-size:12px;font-weight:700;white-space:nowrap;">📞 전화</a>';
+    html += '</div>';
+  });
+
+  html += '</div></div>';
+  panel.innerHTML = html;
+}
 
 document.addEventListener('DOMContentLoaded', function(){
   try{ initEvents(); } catch(e){ console.error('[initEvents 오류]', e); }
