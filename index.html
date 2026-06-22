@@ -976,9 +976,10 @@
           </div>
         </div>
         <div class="field full" style="margin-top:6px;">
-          <label>🆕 신차종 관심 모델 <span style="font-size:10px;color:var(--text-lt);font-weight:500;">(여러 개 추가 가능)</span></label>
-          <div style="display:flex;gap:8px;align-items:flex-start;">
-            <div class="newmodel-chip-row" id="newModelChipRow" style="flex:1;"></div>
+          <label>🆕 신차종 관심 모델 <span style="font-size:10px;color:var(--text-lt);font-weight:500;">(출시 예정 신차 등 직접 입력, 여러 개 추가 가능)</span></label>
+          <div class="newmodel-chip-row" id="newModelChipRow" style="margin-bottom:8px;"></div>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="newModelTextInput" placeholder="예: EQA, 신형 E클래스, 차세대 GLC 등" style="flex:1;" autocomplete="off"/>
             <button type="button" class="newmodel-add-btn-inline" id="newModelAddBtn">+ 추가</button>
           </div>
           <input type="hidden" id="newModelInterest" value=""/>
@@ -1291,9 +1292,10 @@
             </div>
           </div>
           <div class="field full" style="margin-top:6px;">
-            <label>🆕 신차종 관심 모델 <span style="font-size:10px;color:var(--text-lt);font-weight:500;">(여러 개 추가 가능)</span></label>
-            <div style="display:flex;gap:8px;align-items:flex-start;">
-              <div class="newmodel-chip-row" id="e-newModelChipRow" style="flex:1;"></div>
+            <label>🆕 신차종 관심 모델 <span style="font-size:10px;color:var(--text-lt);font-weight:500;">(출시 예정 신차 등 직접 입력, 여러 개 추가 가능)</span></label>
+            <div class="newmodel-chip-row" id="e-newModelChipRow" style="margin-bottom:8px;"></div>
+            <div style="display:flex;gap:8px;">
+              <input type="text" id="e-newModelTextInput" placeholder="예: EQA, 신형 E클래스, 차세대 GLC 등" style="flex:1;" autocomplete="off"/>
               <button type="button" class="newmodel-add-btn-inline" id="e-newModelAddBtn">+ 추가</button>
             </div>
             <input type="hidden" id="e-newModelInterest" value=""/>
@@ -2210,6 +2212,7 @@ function resetNewForm(){
   closeToggleCard('careToggleBtn','careToggleBody');
   closeToggleCard('serviceToggleBtn','serviceToggleBody');
   resetModelChips('');
+  var nmTextInp=document.getElementById("newModelTextInput"); if(nmTextInp)nmTextInp.value="";
 }
 
 // ── 추가상담 저장 ────────────────────────────────────────────
@@ -3402,10 +3405,11 @@ function renderNewModelChips(prefix){
 }
 
 function addCurrentModelChip(prefix){
-  var modelSel = document.getElementById(prefix+'modelName');
-  var modelVal = modelSel ? modelSel.value : '';
+  var textInput = document.getElementById(prefix+'newModelTextInput');
+  var modelVal = textInput ? textInput.value.trim() : '';
   if(!modelVal){
-    alert('먼저 위 "차량 관심 정보"에서 모델을 선택해주세요.');
+    alert('관심 모델명을 입력해주세요. (예: EQA, 신형 E클래스 등)');
+    if(textInput) textInput.focus();
     return;
   }
   if(!newModelChips[prefix]) newModelChips[prefix] = [];
@@ -3415,6 +3419,7 @@ function addCurrentModelChip(prefix){
   }
   newModelChips[prefix].push(modelVal);
   renderNewModelChips(prefix);
+  if(textInput){ textInput.value=''; textInput.focus(); }
 }
 
 function removeModelChip(prefix, idx){
@@ -3435,8 +3440,14 @@ function resetModelChips(prefix){
 
 function bindNewModelToggle(prefix){
   var addBtn = document.getElementById(prefix+'newModelAddBtn');
+  var textInput = document.getElementById(prefix+'newModelTextInput');
   if(addBtn){
     addBtn.addEventListener('click', function(){ addCurrentModelChip(prefix); });
+  }
+  if(textInput){
+    textInput.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ e.preventDefault(); addCurrentModelChip(prefix); }
+    });
   }
 }
 
